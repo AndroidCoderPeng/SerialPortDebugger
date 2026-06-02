@@ -12,6 +12,7 @@ SOURCES += \
     DebuggerApplication.cpp \
     Logger.cpp \
     MainWindow.cpp \
+    SerialPortObserver.cpp \
     com_message.cpp \
     combo_box_item_delegate.cpp \
     command.cpp \
@@ -26,6 +27,7 @@ HEADERS += \
     DebuggerApplication.hpp \
     Logger.hpp \
     MainWindow.hpp \
+    SerialPortObserver.hpp \
     com_message.hpp \
     combo_box_item_delegate.hpp \
     command.hpp \

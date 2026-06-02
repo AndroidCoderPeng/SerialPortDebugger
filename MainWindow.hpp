@@ -28,6 +28,9 @@ public:
 
   ~MainWindow() override;
 
+public slots:
+  void slotDataReceived(const QByteArray &data);
+
 private:
   Ui::MainWindow *ui;
   QSerialPort serialPort;

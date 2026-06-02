@@ -461,6 +461,11 @@ void MainWindow::onReceivedData() {
   }
 }
 
+void MainWindow::slotDataReceived(const QByteArray &data) {
+  // updateComMessageLog(data, "收");
+  qDebug() << "Received data from SerialPortObserver: " << data;
+}
+
 void MainWindow::onRefreshButtonClicked() {
   ui->portNameBox->clear();
   const auto &ports = QSerialPortInfo::availablePorts();

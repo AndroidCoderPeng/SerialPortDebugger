@@ -1,4 +1,5 @@
 #include "DebuggerApplication.hpp"
+#include "SerialPortObserver.hpp"
 
 #include <QFontDatabase>
 #include <QScreen>
@@ -16,9 +17,12 @@ DebuggerApplication::DebuggerApplication(int &argc, char **argv)
     _logger.w("Failed to load font.");
   }
 
-  // 初始化串口读数线程
-
   initMainWindow();
+
+  // 初始化串口读数线程
+  QObject::connect(SerialPortObserver::get(),
+                   &SerialPortObserver::signalDataReceived, mainWindowPtr,
+                   &MainWindow::slotDataReceived);
 }
 
 void DebuggerApplication::initMainWindow() {
