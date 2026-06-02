@@ -2,8 +2,8 @@
 // Created by Administrator on 2025/5/2.
 //
 
-#include "mainwindow.hpp"
-#include "ui_mainwindow.h"
+#include "MainWindow.hpp"
+#include "ui_MainWindow.h"
 
 #include <QClipboard>
 #include <QDateTime>

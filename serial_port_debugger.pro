@@ -9,31 +9,35 @@ QT       += core gui widgets serialport sql
 CONFIG += c++11
 
 SOURCES += \
+    DebuggerApplication.cpp \
+    Logger.cpp \
+    MainWindow.cpp \
     com_message.cpp \
     combo_box_item_delegate.cpp \
     command.cpp \
     commandscriptdialog.cpp \
     main.cpp \
-    mainwindow.cpp \
     savecommanddialog.cpp \
     scriptconfig.cpp \
     taskexecutor.cpp \
     utils.cpp
 
 HEADERS += \
+    DebuggerApplication.hpp \
+    Logger.hpp \
+    MainWindow.hpp \
     com_message.hpp \
     combo_box_item_delegate.hpp \
     command.hpp \
     commandscriptdialog.hpp \
-    mainwindow.hpp \
     savecommanddialog.hpp \
     scriptconfig.hpp \
     taskexecutor.hpp \
     utils.hpp
 
 FORMS += \
+    MainWindow.ui \
     commandscriptdialog.ui \
-    mainwindow.ui \
     savecommanddialog.ui
 
 RESOURCES += \

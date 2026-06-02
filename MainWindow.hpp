@@ -2,8 +2,8 @@
 // Created by Administrator on 2025/5/2.
 //
 
-#ifndef MAINWINDOW_HPP
-#define MAINWINDOW_HPP
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QSerialPort>
@@ -80,4 +80,4 @@ private:
   void onEncodeCheckBoxStateChanged(const qint16 &state);
 };
 
-#endif // MAINWINDOW_HPP
+#endif // MAINWINDOW_H
