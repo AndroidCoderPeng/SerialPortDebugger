@@ -1,18 +1,17 @@
 #include "SerialPortObserver.hpp"
 
-#include <QSerialPort>
-
 #ifdef _WIN32
-#define PortName "COM1"
+#define DefaultPort "COM1"
 #else
-// Linux, macOS 等
-#define PortName "dev/ttyS0"
+#define DefaultPort "/dev/ttyS0"
 #endif
-#define BaudRate 19200
+#define DefaultBaudRate 19200
 
 std::unique_ptr<SerialPortObserver> SerialPortObserver::_instance = nullptr;
 
-SerialPortObserver::SerialPortObserver() : _logger("SerialPortObserver") {
+SerialPortObserver::SerialPortObserver()
+    : _logger("SerialPortObserver"), _portName(DefaultPort),
+      _baudRate(DefaultBaudRate) {
   _logger.i("initialized succeed.");
 }
 
@@ -24,36 +23,59 @@ SerialPortObserver *SerialPortObserver::get() {
   return _instance.get();
 }
 
-// 需要改为通过按钮控制串口开关，然后再开始读数
-void SerialPortObserver::run() {
-  QSerialPort serial;
-  serial.setPortName(PortName);
-  serial.setBaudRate(BaudRate);
-  serial.setDataBits(QSerialPort::Data8);
-  serial.setParity(QSerialPort::NoParity);
-  serial.setStopBits(QSerialPort::OneStop);
-  serial.setFlowControl(QSerialPort::NoFlowControl);
+void SerialPortObserver::open(const QString &portName, qint32 baudRate) {
+  _portName = portName;
+  _baudRate = baudRate;
 
-  if (!serial.open(QIODevice::ReadOnly)) {
-    _logger.e("Failed to open serial port");
+  if (portPtr && portPtr->isOpen()) {
+    portPtr->close();
+  }
+
+  portPtr = new QSerialPort(this);
+  portPtr->setPortName(_portName);
+  portPtr->setBaudRate(_baudRate);
+  portPtr->setDataBits(QSerialPort::Data8);
+  portPtr->setParity(QSerialPort::NoParity);
+  portPtr->setStopBits(QSerialPort::OneStop);
+  portPtr->setFlowControl(QSerialPort::NoFlowControl);
+
+  if (!portPtr->open(QIODevice::ReadWrite)) {
+    _logger.eFmt("Failed to open %s", _portName.toStdString().c_str());
     return;
   }
 
-  _logger.dFmt("%s opened successfully", PortName);
+  _logger.dFmt("%s opened successfully", _portName.toStdString().c_str());
+}
 
+void SerialPortObserver::write(const QByteArray data) {}
+
+void SerialPortObserver::close() {
+  if (portPtr && portPtr->isOpen()) {
+    portPtr->close();
+    _logger.dFmt("%s closed", _portName.toStdString().c_str());
+  }
+}
+
+bool SerialPortObserver::isOpen() const { return portPtr && portPtr->isOpen(); }
+
+// 需要改为通过按钮控制串口开关，然后再开始读数
+void SerialPortObserver::run() {
   while (!isInterruptionRequested()) {
-    if (serial.waitForReadyRead(100)) {
-      QByteArray data = serial.readAll();
-      if (!data.isEmpty()) {
-        emit signalDataReceived(data);
+    if (portPtr && portPtr->isOpen()) {
+      if (portPtr->waitForReadyRead(100)) {
+        QByteArray data = portPtr->readAll();
+        if (!data.isEmpty()) {
+          emit signalDataReceived(data);
+        }
       }
+    } else {
+      QThread::msleep(100);
     }
   }
-  serial.close();
-  _logger.i("Serial port closed");
 }
 
 SerialPortObserver::~SerialPortObserver() {
+  close();
   quit();
   wait();
 }
