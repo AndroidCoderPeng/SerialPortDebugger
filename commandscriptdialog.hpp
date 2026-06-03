@@ -6,7 +6,7 @@
 #include <QList>
 #include <QStandardItemModel>
 
-#include "command.hpp"
+#include "GlobalDefinition.hpp"
 #include "scriptconfig.hpp"
 
 namespace Ui {
@@ -19,7 +19,7 @@ class CommandScriptDialog : public QDialog {
 public:
   explicit CommandScriptDialog(
       QWidget *parent = nullptr,
-      const QList<Command> commands = QList<Command>());
+      const QList<DatabaseCommand> commands = QList<DatabaseCommand>());
   ~CommandScriptDialog();
 
   void onCommandSelectionChanged(const QItemSelection &selected,

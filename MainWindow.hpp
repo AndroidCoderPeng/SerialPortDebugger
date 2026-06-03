@@ -6,7 +6,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QSqlQuery>
 #include <QTableWidgetItem>
 
 #include "Logger.hpp"
@@ -34,14 +33,11 @@ public slots:
 private:
   Ui::MainWindow *ui;
   Logger _logger;
-  QSqlQuery *sqlQuery;
   QTableWidgetItem *commandItem = nullptr;
   QTableWidgetItem *remarkItem = nullptr;
   QByteArray bufferReceived;
   QList<ComMessage> history;
   QTimer *timer = nullptr;
-
-  void initDatabase();
 
   void updateComboxState(bool disabled) const;
 

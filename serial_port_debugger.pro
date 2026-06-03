@@ -9,6 +9,7 @@ QT       += core gui widgets serialport sql
 CONFIG += c++11
 
 SOURCES += \
+    DatabaseWrapper.cpp \
     DebuggerApplication.cpp \
     Logger.cpp \
     MainWindow.cpp \
@@ -24,6 +25,7 @@ SOURCES += \
     utils.cpp
 
 HEADERS += \
+    DatabaseWrapper.hpp \
     DebuggerApplication.hpp \
     GlobalDefinition.hpp \
     Logger.hpp \

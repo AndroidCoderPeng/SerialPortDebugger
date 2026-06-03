@@ -6,7 +6,7 @@
 #include "utils.hpp"
 
 CommandScriptDialog::CommandScriptDialog(QWidget *parent,
-                                         const QList<Command> commands)
+                                         const QList<DatabaseCommand> commands)
     : QDialog(parent), ui(new Ui::CommandScriptDialog) {
   ui->setupUi(this);
 
@@ -18,15 +18,13 @@ CommandScriptDialog::CommandScriptDialog(QWidget *parent,
   ui->listView->setModel(commandItemModel);
 
   int index = 1;
-  for (const Command &cmd : commands) {
-    QString itemText = QString("%1.【%2】%3")
-                           .arg(index++)
-                           .arg(cmd.getRemark())
-                           .arg(cmd.getValue());
+  for (const DatabaseCommand &cmd : commands) {
+    QString itemText =
+        QString("%1.【%2】%3").arg(index++).arg(cmd.remark).arg(cmd.value);
     QStandardItem *item = new QStandardItem(itemText);
     // 保存到Qt默认缓存体系，方便后面取用
-    item->setData(cmd.getRemark(), Qt::UserRole);
-    item->setData(cmd.getValue(), Qt::UserRole + 1);
+    item->setData(cmd.remark, Qt::UserRole);
+    item->setData(cmd.value, Qt::UserRole + 1);
     item->setEditable(false);
     commandItemModel->appendRow(item);
   }

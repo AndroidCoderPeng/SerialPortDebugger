@@ -18,7 +18,7 @@
 #include <QSqlQuery>
 #include <QTimer>
 
-#include "GlobalDefinition.hpp"
+#include "DatabaseWrapper.hpp"
 #include "SerialPortObserver.hpp"
 #include "combo_box_item_delegate.hpp"
 #include "commandscriptdialog.hpp"
@@ -238,12 +238,18 @@ MainWindow::MainWindow(QMainWindow *parent)
 
   initParam(ui);
 
-  initDatabase();
-
   const QStringList headerLabels = {"指令值", "备注"};
+
   ui->tableWidget->setHorizontalHeaderLabels(headerLabels);
   // 序号文字居中
   ui->tableWidget->verticalHeader()->setDefaultAlignment(Qt::AlignCenter);
+
+  DatabaseWrapper::get()->init();
+  const auto commands = DatabaseWrapper::get()->getAllCommands();
+  for (const auto &cmd : commands) {
+    updateCommandTableWidget(cmd.id, cmd.value, cmd.remark);
+  }
+
   // ui渲染完之后获取tableWidget真实宽度
   QTimer::singleShot(0, this, [this] {
     int indexColumnWidth = ui->tableWidget->verticalHeader()->width();
@@ -284,53 +290,6 @@ MainWindow::MainWindow(QMainWindow *parent)
           &MainWindow::onTimeCheckBoxStateChanged);
   connect(ui->hexReceiveCheckBox, &QCheckBox::stateChanged, this,
           &MainWindow::onEncodeCheckBoxStateChanged);
-}
-
-void MainWindow::initDatabase() {
-  QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-  db.setDatabaseName("commands.db");
-  if (!db.open()) {
-    qDebug() << db.lastError().text();
-    return;
-  }
-  sqlQuery = new QSqlQuery(db);
-  sqlQuery->exec("CREATE TABLE IF NOT EXISTS commands (id INTEGER PRIMARY KEY, "
-                 "command TEXT, remark TEXT)");
-
-  // 添加几条默认指令（上电、下电、电位查询）
-  sqlQuery->exec("SELECT COUNT(*) FROM commands");
-  sqlQuery->next();
-  int count = sqlQuery->value(0).toInt();
-  if (count == 0) {
-    QList<DefaultCommand> defaults = {
-        {"FE FE 02 10 FA", "上电"},
-        {"FE FE 02 13 FA", "下电"},
-        {"FE FE 02 3D FA", "电位查询"},
-        {"FE FE 0F 3C 08 00 08 00 08 00 08 00 08 00 08 00 14 FA", "复位"},
-        {"FE FE 03 12 01 FA", "状态检测"}};
-
-    sqlQuery->prepare("INSERT INTO commands (command, remark) VALUES (?, ?)");
-    for (const auto &cmd : defaults) {
-      sqlQuery->addBindValue(cmd.command);
-      sqlQuery->addBindValue(cmd.remark);
-      if (!sqlQuery->exec()) {
-        qDebug() << "插入默认指令失败：" << sqlQuery->lastError().text();
-      }
-    }
-  }
-
-  if (!sqlQuery->exec("SELECT id, command, remark FROM commands")) {
-    qDebug() << sqlQuery->lastError().text();
-    return;
-  }
-
-  while (sqlQuery->next()) {
-    // 获取主键 ID
-    int id = sqlQuery->value(0).toInt();
-    QString command = sqlQuery->value(1).toString();
-    QString remark = sqlQuery->value(2).toString();
-    updateCommandTableWidget(id, command, remark);
-  }
 }
 
 void MainWindow::updateComboxState(const bool disabled) const {
@@ -375,8 +334,6 @@ void MainWindow::onOpenPortButtonClicked() {
       ui->openPortButton->setText("关闭串口");
       updateComboxState(true);
       updateConnectState(true);
-      // connect(&serialPort, &QSerialPort::readyRead, this,
-      //         &MainWindow::onReceivedData);
     } else {
       QMessageBox::critical(this, "错误", "打开失败，请检查参数设置和串口连接");
     }
@@ -458,29 +415,18 @@ void MainWindow::onAddCommandButtonClicked() {
     const auto &value = command.getValue();
     const auto &remark = command.getRemark();
 
-    // 检查是否已存在该指令值
-    sqlQuery->prepare("SELECT COUNT(*) FROM commands WHERE command = ?");
-    sqlQuery->addBindValue(value);
-    if (!sqlQuery->exec()) {
-      qDebug() << "查询失败：" << sqlQuery->lastError().text();
-      return;
-    }
-
-    if (sqlQuery->next() && sqlQuery->value(0).toInt() > 0) {
+    if (DatabaseWrapper::get()->commandExists(value)) {
       QMessageBox::warning(this, "警告", "该指令值已存在！");
       return;
     }
 
     // 插入到数据库
-    sqlQuery->prepare("INSERT INTO commands (command, remark) VALUES (?, ?)");
-    sqlQuery->addBindValue(value);
-    sqlQuery->addBindValue(remark);
-    if (!sqlQuery->exec()) {
-      qDebug() << "插入失败：" << sqlQuery->lastError().text();
-    } else {
-      // 获取插入记录的主键 ID
-      int insertedId = sqlQuery->lastInsertId().toInt();
-      updateCommandTableWidget(insertedId, value, remark);
+    DatabaseWrapper::get()->addCommand(value, remark);
+    // 重新加载表格
+    ui->tableWidget->setRowCount(0);
+    const auto commands = DatabaseWrapper::get()->getAllCommands();
+    for (const auto &cmd : commands) {
+      updateCommandTableWidget(cmd.id, cmd.value, cmd.remark);
     }
   }
 }
@@ -563,34 +509,23 @@ void MainWindow::onCustomAction(const QTableWidgetItem *item,
       const auto &newRemark = newCommand.getRemark();
 
       // 检查是否重复
-      sqlQuery->prepare("SELECT COUNT(*) FROM commands WHERE command = ?");
-      sqlQuery->addBindValue(newValue);
-      if (!sqlQuery->exec()) {
-        qDebug() << "查询失败：" << sqlQuery->lastError().text();
+      if (DatabaseWrapper::get()->commandExists(newValue) &&
+          newValue != command) {
+        QMessageBox::warning(this, "警告", "该指令值已存在！");
         return;
       }
 
       // 更新数据库
-      sqlQuery->prepare(
-          "UPDATE commands SET command = ?, remark = ? WHERE id = ?");
-      sqlQuery->addBindValue(newValue);
-      sqlQuery->addBindValue(newRemark);
-      sqlQuery->addBindValue(id);
-      if (!sqlQuery->exec()) {
-        qDebug() << "更新失败：" << sqlQuery->lastError().text();
-      } else {
-        // 更新表格显示
-        QTableWidgetItem *cmdItem = ui->tableWidget->item(row, 0);
-        cmdItem->setText(newValue);
+      DatabaseWrapper::get()->updateCommand(id, newValue, newRemark);
 
-        QTableWidgetItem *rmkItem = ui->tableWidget->item(row, 1);
-        rmkItem->setText(newRemark);
-      }
+      // 更新表格显示
+      QTableWidgetItem *cmdItem = ui->tableWidget->item(row, 0);
+      cmdItem->setText(newValue);
+      QTableWidgetItem *rmkItem = ui->tableWidget->item(row, 1);
+      rmkItem->setText(newRemark);
     }
   } else if (message == "3") {
-    sqlQuery->prepare("DELETE FROM commands WHERE id = ?");
-    sqlQuery->addBindValue(id);
-    sqlQuery->exec();
+    DatabaseWrapper::get()->deleteCommand(id);
     ui->tableWidget->removeRow(item->row());
   }
 }
@@ -657,19 +592,7 @@ void MainWindow::onScriptButtonClicked() {
     return;
   }
 
-  if (!sqlQuery->exec("SELECT id, command, remark FROM commands")) {
-    qDebug() << sqlQuery->lastError().text();
-    return;
-  }
-
-  QList<Command> commands;
-  while (sqlQuery->next()) {
-    Command cmd;
-    cmd.setId(sqlQuery->value(0).toInt());
-    cmd.setValue(sqlQuery->value(1).toString());
-    cmd.setRemark(sqlQuery->value(2).toString());
-    commands.append(cmd);
-  }
+  const auto commands = DatabaseWrapper::get()->getAllCommands();
 
   if (commands.count() <= 1) {
     QMessageBox::information(this, "提示", "指令数量至少大于2");
