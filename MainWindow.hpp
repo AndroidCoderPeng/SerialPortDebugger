@@ -6,10 +6,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QSerialPort>
 #include <QSqlQuery>
 #include <QTableWidgetItem>
 
+#include "Logger.hpp"
 #include "com_message.hpp"
 
 QT_BEGIN_NAMESPACE
@@ -33,7 +33,7 @@ public slots:
 
 private:
   Ui::MainWindow *ui;
-  QSerialPort serialPort;
+  Logger _logger;
   QSqlQuery *sqlQuery;
   QTableWidgetItem *commandItem = nullptr;
   QTableWidgetItem *remarkItem = nullptr;
@@ -48,8 +48,6 @@ private:
   void onOpenPortButtonClicked();
 
   void updateConnectState(bool connected) const;
-
-  void onReceivedData();
 
   void onRefreshButtonClicked();
 

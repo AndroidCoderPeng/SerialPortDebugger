@@ -11,12 +11,14 @@
 #include <QFileDialog>
 #include <QMenu>
 #include <QMessageBox>
+#include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QTimer>
 
+#include "SerialPortObserver.hpp"
 #include "combo_box_item_delegate.hpp"
 #include "commandscriptdialog.hpp"
 #include "savecommanddialog.hpp"
@@ -226,7 +228,7 @@ static void initParam(const Ui::MainWindow *ui) {
 }
 
 MainWindow::MainWindow(QMainWindow *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow) {
+    : QMainWindow(parent), ui(new Ui::MainWindow), _logger("MainWindow") {
   ui->setupUi(this);
 
   setComboxBoxStyle(ui);
@@ -275,12 +277,12 @@ MainWindow::MainWindow(QMainWindow *parent)
           &MainWindow::showTableWidgetContextMenu);
   connect(ui->sendDataButton, &QPushButton::clicked, this,
           &MainWindow::onSendCommandButtonClicked);
-  connect(ui->scriptButton, &QPushButton::clicked, this,
-          &MainWindow::onScriptButtonClicked);
-  connect(ui->timeCheckBox, &QCheckBox::stateChanged, this,
-          &MainWindow::onTimeCheckBoxStateChanged);
-  connect(ui->hexReceiveCheckBox, &QCheckBox::stateChanged, this,
-          &MainWindow::onEncodeCheckBoxStateChanged);
+  // connect(ui->scriptButton, &QPushButton::clicked, this,
+  //         &MainWindow::onScriptButtonClicked);
+  // connect(ui->timeCheckBox, &QCheckBox::stateChanged, this,
+  //         &MainWindow::onTimeCheckBoxStateChanged);
+  // connect(ui->hexReceiveCheckBox, &QCheckBox::stateChanged, this,
+  //         &MainWindow::onEncodeCheckBoxStateChanged);
 }
 
 void MainWindow::initDatabase() {
@@ -349,8 +351,8 @@ void MainWindow::updateComboxState(const bool disabled) const {
 }
 
 void MainWindow::onOpenPortButtonClicked() {
-  if (serialPort.isOpen()) {
-    serialPort.close();
+  if (SerialPortObserver::get()->isOpen()) {
+    SerialPortObserver::get()->close();
     ui->openPortButton->setText("打开串口");
     updateComboxState(false);
     updateConnectState(false);
@@ -359,70 +361,29 @@ void MainWindow::onOpenPortButtonClicked() {
       timer->stop();
     }
   } else {
-    serialPort.setPortName(ui->portNameBox->currentText());
+    const QString portName = ui->portNameBox->currentText();
     bool ok;
     const int baudRate = ui->baudRateBox->currentText().toInt(&ok);
-    if (ok) {
-      serialPort.setBaudRate(baudRate);
-    } else {
-      qDebug() << "波特率转换失败，使用默认值 9600";
-      serialPort.setBaudRate(9600);
+    const QString dataBits = ui->dataBitBox->currentText();
+    const QString parity = ui->parityBitBox->currentText();
+    const QString stopBits = ui->stopBitBox->currentText();
+    const QString flowControl = "None"; // 默认无流控
+
+    if (!ok) {
+      QMessageBox::warning(this, "错误", "波特率转换失败");
+      return;
     }
 
-    const QString dataBitsStr = ui->dataBitBox->currentText();
-    QSerialPort::DataBits dataBits;
-    if (dataBitsStr == "5") {
-      dataBits = QSerialPort::Data5;
-    } else if (dataBitsStr == "6") {
-      dataBits = QSerialPort::Data6;
-    } else if (dataBitsStr == "7") {
-      dataBits = QSerialPort::Data7;
-    } else if (dataBitsStr == "8") {
-      dataBits = QSerialPort::Data8;
-    } else {
-      dataBits = QSerialPort::UnknownDataBits;
-    }
-    serialPort.setDataBits(dataBits);
-
-    const QString parityStr = ui->parityBitBox->currentText();
-    QSerialPort::Parity parity;
-    if (parityStr == "None") {
-      parity = QSerialPort::NoParity;
-    } else if (parityStr == "Even") {
-      parity = QSerialPort::EvenParity;
-    } else if (parityStr == "Odd") {
-      parity = QSerialPort::OddParity;
-    } else if (parityStr == "Mark") {
-      parity = QSerialPort::MarkParity;
-    } else if (parityStr == "Space") {
-      parity = QSerialPort::SpaceParity;
-    } else {
-      parity = QSerialPort::UnknownParity;
-    }
-    serialPort.setParity(parity);
-
-    const QString stopBitsStr = ui->stopBitBox->currentText();
-    QSerialPort::StopBits stopBits;
-    if (stopBitsStr == "1") {
-      stopBits = QSerialPort::OneStop;
-    } else if (stopBitsStr == "1.5") {
-      stopBits = QSerialPort::OneAndHalfStop;
-    } else if (stopBitsStr == "2") {
-      stopBits = QSerialPort::TwoStop;
-    } else {
-      stopBits = QSerialPort::UnknownStopBits;
-    }
-    serialPort.setStopBits(stopBits);
-
-    // 以读写模式打开串口
-    if (serialPort.open(QIODevice::ReadWrite)) {
+    const auto ret = SerialPortObserver::get()->open(
+        portName, baudRate, dataBits, parity, stopBits, flowControl);
+    if (ret) {
       ui->openPortButton->setText("关闭串口");
       updateComboxState(true);
       updateConnectState(true);
-      connect(&serialPort, &QSerialPort::readyRead, this,
-              &MainWindow::onReceivedData);
+      // connect(&serialPort, &QSerialPort::readyRead, this,
+      //         &MainWindow::onReceivedData);
     } else {
-      QMessageBox::critical(this, "错误", serialPort.errorString());
+      QMessageBox::critical(this, "错误", "打开失败，请检查参数设置和串口连接");
     }
   }
 }
@@ -449,21 +410,8 @@ void MainWindow::updateConnectState(const bool connected) const {
   ui->stateView->setStyleSheet(materialLabelStyle);
 }
 
-void MainWindow::onReceivedData() {
-  bufferReceived += serialPort.readAll();
-  while (true) {
-    int endIndex = bufferReceived.indexOf('\n');
-    if (endIndex == -1)
-      break;
-
-    updateComMessageLog(bufferReceived, "收");
-    bufferReceived.remove(0, endIndex + 1);
-  }
-}
-
 void MainWindow::slotDataReceived(const QByteArray &data) {
-  // updateComMessageLog(data, "收");
-  qDebug() << "Received data from SerialPortObserver: " << data;
+  updateComMessageLog(data, "收");
 }
 
 void MainWindow::onRefreshButtonClicked() {
@@ -659,7 +607,7 @@ void MainWindow::onSendCommandButtonClicked() {
 }
 
 void MainWindow::sendCommand(const QString &command) {
-  if (!serialPort.isOpen()) {
+  if (!SerialPortObserver::get()->isOpen()) {
     QMessageBox::warning(this, "警告", "请先打开串口！");
     return;
   }
@@ -671,11 +619,11 @@ void MainWindow::sendCommand(const QString &command) {
       return;
     }
     const QByteArray data = Utils::formatHexString(command);
-    serialPort.write(data);
+    SerialPortObserver::get()->write(data);
     updateComMessageLog(data, "发");
   } else {
     const QByteArray data = command.toUtf8();
-    serialPort.write(data);
+    SerialPortObserver::get()->write(data);
     updateComMessageLog(data, "发");
   }
 }
@@ -709,7 +657,7 @@ void MainWindow::updateComMessageLog(const QByteArray &data,
 }
 
 void MainWindow::onScriptButtonClicked() {
-  if (!serialPort.isOpen()) {
+  if (!SerialPortObserver::get()->isOpen()) {
     QMessageBox::warning(this, "警告", "请先打开串口！");
     return;
   }
@@ -748,7 +696,7 @@ void MainWindow::onScriptButtonClicked() {
 }
 
 void MainWindow::onTimeCheckBoxStateChanged(const qint16 &state) {
-  if (!serialPort.isOpen()) {
+  if (!SerialPortObserver::get()->isOpen()) {
     QMessageBox::warning(this, "警告", "请先打开串口！");
     uncheckTimeCheckBox();
     return;
@@ -829,9 +777,7 @@ void MainWindow::onEncodeCheckBoxStateChanged(const qint16 &state) {
 }
 
 MainWindow::~MainWindow() {
-  if (serialPort.isOpen()) {
-    serialPort.close();
-    uncheckTimeCheckBox();
-  }
+  SerialPortObserver::get()->close();
+  uncheckTimeCheckBox();
   delete ui;
 }
