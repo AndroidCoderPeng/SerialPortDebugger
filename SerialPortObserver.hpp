@@ -13,7 +13,9 @@ public:
   static SerialPortObserver *get();
   ~SerialPortObserver();
 
-  void open(const QString &portName, qint32 baudRate);
+  bool open(const QString &portName, qint32 baudRate, const QString &dataBits,
+            const QString &parity, const QString &stopBits,
+            const QString &flowControl);
   void write(const QByteArray data);
   void close();
   bool isOpen() const;
