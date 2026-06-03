@@ -25,6 +25,7 @@ SOURCES += \
 
 HEADERS += \
     DebuggerApplication.hpp \
+    GlobalDefinition.hpp \
     Logger.hpp \
     MainWindow.hpp \
     SerialPortObserver.hpp \

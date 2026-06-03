@@ -18,6 +18,7 @@
 #include <QSqlQuery>
 #include <QTimer>
 
+#include "GlobalDefinition.hpp"
 #include "SerialPortObserver.hpp"
 #include "combo_box_item_delegate.hpp"
 #include "commandscriptdialog.hpp"
@@ -277,12 +278,12 @@ MainWindow::MainWindow(QMainWindow *parent)
           &MainWindow::showTableWidgetContextMenu);
   connect(ui->sendDataButton, &QPushButton::clicked, this,
           &MainWindow::onSendCommandButtonClicked);
-  // connect(ui->scriptButton, &QPushButton::clicked, this,
-  //         &MainWindow::onScriptButtonClicked);
-  // connect(ui->timeCheckBox, &QCheckBox::stateChanged, this,
-  //         &MainWindow::onTimeCheckBoxStateChanged);
-  // connect(ui->hexReceiveCheckBox, &QCheckBox::stateChanged, this,
-  //         &MainWindow::onEncodeCheckBoxStateChanged);
+  connect(ui->scriptButton, &QPushButton::clicked, this,
+          &MainWindow::onScriptButtonClicked);
+  connect(ui->timeCheckBox, &QCheckBox::stateChanged, this,
+          &MainWindow::onTimeCheckBoxStateChanged);
+  connect(ui->hexReceiveCheckBox, &QCheckBox::stateChanged, this,
+          &MainWindow::onEncodeCheckBoxStateChanged);
 }
 
 void MainWindow::initDatabase() {
@@ -301,12 +302,6 @@ void MainWindow::initDatabase() {
   sqlQuery->next();
   int count = sqlQuery->value(0).toInt();
   if (count == 0) {
-    // 插入默认指令
-    struct DefaultCommand {
-      QString command;
-      QString remark;
-    };
-
     QList<DefaultCommand> defaults = {
         {"FE FE 02 10 FA", "上电"},
         {"FE FE 02 13 FA", "下电"},
