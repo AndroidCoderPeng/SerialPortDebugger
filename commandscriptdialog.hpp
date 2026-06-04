@@ -7,7 +7,6 @@
 #include <QStandardItemModel>
 
 #include "GlobalDefinition.hpp"
-#include "scriptconfig.hpp"
 
 namespace Ui {
 class CommandScriptDialog;

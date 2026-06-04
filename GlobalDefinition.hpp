@@ -14,7 +14,13 @@ struct DatabaseCommand : public DefaultCommand {
 
 struct Task {
   QString command;
-  int interval;
+  int interval = 1000; // 默认间隔1秒
+};
+
+struct ScriptConfig {
+  QString command;
+  QString remark;
+  qint16 interval = 1000; // 默认间隔1秒
 };
 
 #endif // GLOBALDEFINITION_HPP

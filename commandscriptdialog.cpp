@@ -80,18 +80,15 @@ QList<ScriptConfig> CommandScriptDialog::getScriptConfigs() const {
     QString command = item->data(Qt::UserRole).toString(); // 对应的指令值
 
     ScriptConfig cfg;
-    cfg.setRemark(remark);
-    cfg.setCommand(command);
+    cfg.remark = remark;
+    cfg.command = command;
 
     bool ok;
     const auto time = ui->timeLineEdit->text();
     qint16 interval = static_cast<qint16>(time.toInt(&ok));
     if (ok) {
-      cfg.setInterval(interval);
-    } else {
-      cfg.setInterval(1000);
+      cfg.interval = interval;
     }
-
     configs.append(cfg);
   }
   return configs;

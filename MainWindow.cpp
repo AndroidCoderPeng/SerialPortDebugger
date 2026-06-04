@@ -391,7 +391,7 @@ void MainWindow::onScriptButtonClicked() {
     executorPtr = new TaskExecutor(this);
     QList<Task> tasks;
     for (const ScriptConfig &config : configs) {
-      tasks.append({config.getCommand(), config.getInterval()});
+      tasks.append({config.command, config.interval});
     }
     executorPtr->setTasks(tasks);
     connect(executorPtr, &TaskExecutor::taskExecuted, this,

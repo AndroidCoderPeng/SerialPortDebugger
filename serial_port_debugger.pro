@@ -21,8 +21,7 @@ SOURCES += \
     com_message.cpp \
     commandscriptdialog.cpp \
     main.cpp \
-    savecommanddialog.cpp \
-    scriptconfig.cpp
+    savecommanddialog.cpp
 
 HEADERS += \
     CommandItemWidget.hpp \
@@ -37,8 +36,7 @@ HEADERS += \
     Utils.hpp \
     com_message.hpp \
     commandscriptdialog.hpp \
-    savecommanddialog.hpp \
-    scriptconfig.hpp
+    savecommanddialog.hpp
 
 FORMS += \
     MainWindow.ui \
