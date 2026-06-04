@@ -20,11 +20,11 @@
 
 #include "CommandItemWidget.hpp"
 #include "DatabaseWrapper.hpp"
-#include "SerialPortObserver.hpp"
+#include "SerialPortManager.hpp"
+#include "TaskExecutor.hpp"
 #include "Utils.hpp"
 #include "commandscriptdialog.hpp"
 #include "savecommanddialog.hpp"
-#include "TaskExecutor.hpp"
 
 static void initPortParam(const Ui::MainWindow *ui) {
   // 获取电脑串口
@@ -122,8 +122,8 @@ void MainWindow::updateComboxState(const bool disabled) const {
 }
 
 void MainWindow::onOpenPortButtonClicked() {
-  if (SerialPortObserver::get()->isOpen()) {
-    SerialPortObserver::get()->close();
+  if (SerialPortManager::get()->isOpen()) {
+    SerialPortManager::get()->close();
     ui->openPortButton->setText("打开串口");
     updateComboxState(false);
     uncheckTimeCheckBox();
@@ -144,7 +144,7 @@ void MainWindow::onOpenPortButtonClicked() {
       return;
     }
 
-    const auto ret = SerialPortObserver::get()->open(
+    const auto ret = SerialPortManager::get()->open(
         portName, baudRate, dataBits, parity, stopBits, flowControl);
     if (ret) {
       ui->openPortButton->setText("关闭串口");
@@ -321,7 +321,7 @@ void MainWindow::onSendCommandButtonClicked() {
 }
 
 void MainWindow::sendCommand(const QString &command) {
-  if (!SerialPortObserver::get()->isOpen()) {
+  if (!SerialPortManager::get()->isOpen()) {
     QMessageBox::warning(this, "警告", "请先打开串口！");
     return;
   }
@@ -333,11 +333,11 @@ void MainWindow::sendCommand(const QString &command) {
       return;
     }
     const QByteArray data = Utils::formatHexString(command);
-    SerialPortObserver::get()->write(data);
+    SerialPortManager::get()->write(data);
     updateComMessageLog(data, "发");
   } else {
     const QByteArray data = command.toUtf8();
-    SerialPortObserver::get()->write(data);
+    SerialPortManager::get()->write(data);
     updateComMessageLog(data, "发");
   }
 }
@@ -371,7 +371,7 @@ void MainWindow::updateComMessageLog(const QByteArray &data,
 }
 
 void MainWindow::onScriptButtonClicked() {
-  if (!SerialPortObserver::get()->isOpen()) {
+  if (!SerialPortManager::get()->isOpen()) {
     QMessageBox::warning(this, "警告", "请先打开串口！");
     return;
   }
@@ -398,7 +398,7 @@ void MainWindow::onScriptButtonClicked() {
 }
 
 void MainWindow::onTimeCheckBoxStateChanged(const qint16 &state) {
-  if (!SerialPortObserver::get()->isOpen()) {
+  if (!SerialPortManager::get()->isOpen()) {
     QMessageBox::warning(this, "警告", "请先打开串口！");
     uncheckTimeCheckBox();
     return;
@@ -479,7 +479,7 @@ void MainWindow::onEncodeCheckBoxStateChanged(const qint16 &state) {
 }
 
 MainWindow::~MainWindow() {
-  SerialPortObserver::get()->close();
+  SerialPortManager::get()->close();
   uncheckTimeCheckBox();
   delete ui;
 }

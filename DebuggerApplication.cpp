@@ -20,9 +20,9 @@ DebuggerApplication::DebuggerApplication(int &argc, char **argv)
   initMainWindow();
 
   // 初始化串口读数线程
-  QObject::connect(SerialPortObserver::get(),
-                   &SerialPortObserver::signalDataReceived, mainWindowPtr,
-                   &MainWindow::slotDataReceived);
+  // QObject::connect(SerialPortObserver::get(),
+  //                  &SerialPortObserver::signalDataReceived, mainWindowPtr,
+  //                  &MainWindow::slotDataReceived);
 }
 
 void DebuggerApplication::initMainWindow() {

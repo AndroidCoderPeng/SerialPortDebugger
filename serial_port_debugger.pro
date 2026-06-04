@@ -14,6 +14,7 @@ SOURCES += \
     DebuggerApplication.cpp \
     Logger.cpp \
     MainWindow.cpp \
+    SerialPortManager.cpp \
     SerialPortObserver.cpp \
     TaskExecutor.cpp \
     Utils.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     GlobalDefinition.hpp \
     Logger.hpp \
     MainWindow.hpp \
+    SerialPortManager.hpp \
     SerialPortObserver.hpp \
     TaskExecutor.hpp \
     Utils.hpp \
