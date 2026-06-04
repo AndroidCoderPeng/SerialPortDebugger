@@ -21,11 +21,10 @@
 #include "CommandItemWidget.hpp"
 #include "DatabaseWrapper.hpp"
 #include "SerialPortObserver.hpp"
-#include "combo_box_item_delegate.hpp"
+#include "Utils.hpp"
 #include "commandscriptdialog.hpp"
 #include "savecommanddialog.hpp"
-#include "taskexecutor.hpp"
-#include "utils.hpp"
+#include "TaskExecutor.hpp"
 
 static void initPortParam(const Ui::MainWindow *ui) {
   // 获取电脑串口
@@ -206,8 +205,8 @@ void MainWindow::onAddCommandButtonClicked() {
   SaveCommandDialog dialog(this);
   if (dialog.exec() == QDialog::Accepted) {
     const auto command = dialog.getInputValue();
-    const auto &value = command.getValue();
-    const auto &remark = command.getRemark();
+    const auto &value = command.value;
+    const auto &remark = command.remark;
 
     if (DatabaseWrapper::get()->commandExists(value)) {
       QMessageBox::warning(this, "警告", "该指令值已存在！");
@@ -293,8 +292,8 @@ void MainWindow::onCustomAction(const QListWidgetItem *item,
     SaveCommandDialog dialog(this, command, remark);
     if (dialog.exec() == QDialog::Accepted) {
       const auto newCommand = dialog.getInputValue();
-      const auto &newValue = newCommand.getValue();
-      const auto &newRemark = newCommand.getRemark();
+      const auto &newValue = newCommand.value;
+      const auto &newRemark = newCommand.remark;
 
       // 检查是否重复
       if (DatabaseWrapper::get()->commandExists(newValue) &&

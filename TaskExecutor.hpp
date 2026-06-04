@@ -6,6 +6,8 @@
 #include <QString>
 #include <QTimer>
 
+#include "GlobalDefinition.hpp"
+
 class TaskExecutor : public QObject {
   Q_OBJECT
 public:
@@ -20,11 +22,6 @@ private slots:
   void executeNextTask();
 
 private:
-  struct Task {
-    QString command;
-    int interval;
-  };
-
   QList<Task> tasks;
   QTimer timer;
   int currentIndex;

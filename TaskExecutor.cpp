@@ -1,4 +1,4 @@
-#include "taskexecutor.hpp"
+#include "TaskExecutor.hpp"
 
 TaskExecutor::TaskExecutor(QObject *parent) : QObject(parent), currentIndex(0) {
   connect(&timer, &QTimer::timeout, this, &TaskExecutor::executeNextTask);

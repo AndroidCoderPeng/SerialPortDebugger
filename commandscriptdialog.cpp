@@ -3,7 +3,7 @@
 
 #include <QMessageBox>
 
-#include "utils.hpp"
+#include "Utils.hpp"
 
 CommandScriptDialog::CommandScriptDialog(QWidget *parent,
                                          const QList<DatabaseCommand> commands)

@@ -15,15 +15,13 @@ SOURCES += \
     Logger.cpp \
     MainWindow.cpp \
     SerialPortObserver.cpp \
+    TaskExecutor.cpp \
+    Utils.cpp \
     com_message.cpp \
-    combo_box_item_delegate.cpp \
-    command.cpp \
     commandscriptdialog.cpp \
     main.cpp \
     savecommanddialog.cpp \
-    scriptconfig.cpp \
-    taskexecutor.cpp \
-    utils.cpp
+    scriptconfig.cpp
 
 HEADERS += \
     CommandItemWidget.hpp \
@@ -33,14 +31,12 @@ HEADERS += \
     Logger.hpp \
     MainWindow.hpp \
     SerialPortObserver.hpp \
+    TaskExecutor.hpp \
+    Utils.hpp \
     com_message.hpp \
-    combo_box_item_delegate.hpp \
-    command.hpp \
     commandscriptdialog.hpp \
     savecommanddialog.hpp \
-    scriptconfig.hpp \
-    taskexecutor.hpp \
-    utils.hpp
+    scriptconfig.hpp
 
 FORMS += \
     MainWindow.ui \

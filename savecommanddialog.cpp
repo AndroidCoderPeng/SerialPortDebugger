@@ -7,7 +7,7 @@
 
 #include <QMessageBox>
 
-#include "utils.hpp"
+#include "Utils.hpp"
 
 SaveCommandDialog::SaveCommandDialog(QWidget *parent,
                                      const QString &defaultValue,
@@ -45,23 +45,22 @@ void SaveCommandDialog::onSaveCommandButtonClicked() {
 
 void SaveCommandDialog::onCancelButtonClicked() { close(); }
 
-Command SaveCommandDialog::getInputValue() const {
-  Command command;
+DatabaseCommand SaveCommandDialog::getInputValue() const {
+  DatabaseCommand command;
   // 返回输入的值，并转换为大写，并添加空格 格式化
   const auto hex = ui->commandValueView->toPlainText().toUpper();
   if (hex.contains(" ")) {
-    command.setValue(hex);
+    command.value = hex;
   } else {
     QStringList parts;
     for (int i = 0; i < hex.length(); i += 2) {
       parts << hex.mid(i, 2);
     }
     const QString value = parts.join(" ");
-    command.setValue(value);
+    command.value = value;
   }
 
-  const auto remark = ui->remarkValueView->text();
-  command.setRemark(remark);
+  command.remark = ui->remarkValueView->text();
   return command;
 }
 

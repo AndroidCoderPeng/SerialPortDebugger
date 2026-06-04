@@ -7,7 +7,7 @@
 
 #include <QDialog>
 
-#include "command.hpp"
+#include "GlobalDefinition.hpp"
 
 QT_BEGIN_NAMESPACE
 
@@ -31,7 +31,7 @@ public:
 
   void onCancelButtonClicked();
 
-  Command getInputValue() const;
+  DatabaseCommand getInputValue() const;
 
 private:
   Ui::SaveCommandDialog *ui;

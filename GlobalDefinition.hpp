@@ -12,4 +12,9 @@ struct DatabaseCommand : public DefaultCommand {
   int id; // 数据库主键ID
 };
 
+struct Task {
+  QString command;
+  int interval;
+};
+
 #endif // GLOBALDEFINITION_HPP

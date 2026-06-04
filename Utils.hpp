@@ -2,8 +2,8 @@
 // Created by pengx on 2025/5/6.
 //
 
-#ifndef UTILS_HPP
-#define UTILS_HPP
+#ifndef UTILS_H
+#define UTILS_H
 
 #include <QByteArray>
 #include <QString>
@@ -21,4 +21,4 @@ public:
   static bool isPositiveInt(const QString &str);
 };
 
-#endif // UTILS_HPP
+#endif // UTILS_H
