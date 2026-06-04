@@ -18,7 +18,6 @@ SOURCES += \
     SerialPortObserver.cpp \
     TaskExecutor.cpp \
     Utils.cpp \
-    com_message.cpp \
     commandscriptdialog.cpp \
     main.cpp \
     savecommanddialog.cpp
@@ -34,7 +33,6 @@ HEADERS += \
     SerialPortObserver.hpp \
     TaskExecutor.hpp \
     Utils.hpp \
-    com_message.hpp \
     commandscriptdialog.hpp \
     savecommanddialog.hpp
 

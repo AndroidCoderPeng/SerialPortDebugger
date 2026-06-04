@@ -10,7 +10,6 @@
 
 #include "Logger.hpp"
 #include "TaskExecutor.hpp"
-#include "com_message.hpp"
 
 QT_BEGIN_NAMESPACE
 
@@ -36,7 +35,7 @@ private:
   Logger _logger;
   TaskExecutor *executorPtr = nullptr;
 
-  QList<ComMessage> history;
+  QList<PortMessage> history;
   QTimer *timerPtr = nullptr;
 
   void updateComboxState(bool disabled) const;
@@ -73,6 +72,10 @@ private:
   void uncheckTimeCheckBox();
 
   void onEncodeCheckBoxStateChanged(const qint16 &state);
+
+private slots:
+  void executeTask(const QString &command);
+  void onScriptFinished();
 };
 
 #endif // MAINWINDOW_H

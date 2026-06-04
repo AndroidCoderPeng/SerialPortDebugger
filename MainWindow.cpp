@@ -86,6 +86,14 @@ MainWindow::MainWindow(QMainWindow *parent)
   QIntValidator *validator = new QIntValidator(1, 99999);
   ui->timeLineEdit->setValidator(validator);
 
+  // 初始化任务执行器
+  executorPtr = new TaskExecutor(this);
+  connect(executorPtr, &TaskExecutor::taskExecuted, this,
+          &MainWindow::executeTask);
+  connect(executorPtr, &TaskExecutor::finished, this,
+          &MainWindow::onScriptFinished);
+
+  // 连接信号槽
   connect(ui->openPortButton, &QPushButton::clicked, this,
           &MainWindow::onOpenPortButtonClicked);
   connect(ui->refreshButton, &QPushButton::clicked, this,
@@ -190,7 +198,7 @@ void MainWindow::onSaveDataButtonClicked() {
     return;
   }
   QTextStream out(&file);
-  const QList<ComMessage> &listRef = history;
+  const QList<PortMessage> &listRef = history;
   for (const auto &msg : listRef) {
     const QString hexData = Utils::formatByteArray(msg.data);
     const auto line = QString("[%1]【%2】%3\n")
@@ -345,7 +353,7 @@ void MainWindow::sendCommand(const QString &command) {
 
 void MainWindow::updateComMessageLog(const QByteArray &data,
                                      const QString &direction) {
-  const ComMessage msg(data, direction, QDateTime::currentMSecsSinceEpoch());
+  const PortMessage msg(data, direction, QDateTime::currentMSecsSinceEpoch());
   history.append(msg);
 
   QString dataStr;
@@ -377,6 +385,12 @@ void MainWindow::onScriptButtonClicked() {
     return;
   }
 
+  if (executorPtr && executorPtr->isRunning()) {
+    QMessageBox::information(this, "提示",
+                             "脚本正在执行，请先等待当前脚本完成");
+    return;
+  }
+
   const auto commands = DatabaseWrapper::get()->getAllCommands();
 
   if (commands.count() <= 1) {
@@ -388,16 +402,14 @@ void MainWindow::onScriptButtonClicked() {
   if (dialog.exec() == QDialog::Accepted) {
     // 获取脚本参数，然后按照脚本执行命令
     const auto configs = dialog.getScriptConfigs();
-    executorPtr = new TaskExecutor(this);
     QList<Task> tasks;
     for (const ScriptConfig &config : configs) {
-      tasks.append({config.command, config.interval});
+      Task task;
+      task.command = config.command;
+      task.interval = config.interval;
+      tasks.append(task);
     }
     executorPtr->setTasks(tasks);
-    connect(executorPtr, &TaskExecutor::taskExecuted, this,
-            [this](const QString &command) { sendCommand(command); });
-    connect(executorPtr, &TaskExecutor::finished, executorPtr,
-            &QObject::deleteLater);
     executorPtr->start();
   }
 }
@@ -441,7 +453,7 @@ void MainWindow::uncheckTimeCheckBox() {
 
 void MainWindow::onEncodeCheckBoxStateChanged(const qint16 &state) {
   ui->comMessageView->clear(); // 清空当前显示
-  const QList<ComMessage> &listRef = history;
+  const QList<PortMessage> &listRef = history;
   if (state == Qt::Checked) {
     for (const auto &msg : listRef) {
       // 十六进制格式数据
@@ -483,8 +495,15 @@ void MainWindow::onEncodeCheckBoxStateChanged(const qint16 &state) {
   ui->comMessageView->ensureCursorVisible(); // 自动滚到底部
 }
 
+void MainWindow::executeTask(const QString &command) { sendCommand(command); }
+
+void MainWindow::onScriptFinished() {
+  QMessageBox::information(this, "提示", "脚本执行完成");
+}
+
 MainWindow::~MainWindow() {
   SerialPortManager::get()->close();
+  executorPtr->stop();
   uncheckTimeCheckBox();
   delete ui;
 }
