@@ -14,13 +14,13 @@ SOURCES += \
     DebuggerApplication.cpp \
     Logger.cpp \
     MainWindow.cpp \
+    SaveCommandDialog.cpp \
     SerialPortManager.cpp \
     SerialPortObserver.cpp \
     TaskExecutor.cpp \
     Utils.cpp \
     commandscriptdialog.cpp \
-    main.cpp \
-    savecommanddialog.cpp
+    main.cpp
 
 HEADERS += \
     CommandItemWidget.hpp \
@@ -29,17 +29,17 @@ HEADERS += \
     GlobalDefinition.hpp \
     Logger.hpp \
     MainWindow.hpp \
+    SaveCommandDialog.hpp \
     SerialPortManager.hpp \
     SerialPortObserver.hpp \
     TaskExecutor.hpp \
     Utils.hpp \
-    commandscriptdialog.hpp \
-    savecommanddialog.hpp
+    commandscriptdialog.hpp
 
 FORMS += \
     MainWindow.ui \
-    commandscriptdialog.ui \
-    savecommanddialog.ui
+    SaveCommandDialog.ui \
+    commandscriptdialog.ui
 
 RESOURCES += \
     font.qrc \

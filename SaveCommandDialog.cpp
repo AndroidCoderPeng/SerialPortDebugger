@@ -2,8 +2,8 @@
 // Created by Administrator on 2025/5/5.
 //
 
-#include "savecommanddialog.hpp"
-#include "ui_savecommanddialog.h"
+#include "SaveCommandDialog.hpp"
+#include "ui_SaveCommandDialog.h"
 
 #include <QMessageBox>
 

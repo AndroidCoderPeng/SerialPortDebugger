@@ -2,8 +2,8 @@
 // Created by Administrator on 2025/5/5.
 //
 
-#ifndef SAVECOMMANDDIALOG_HPP
-#define SAVECOMMANDDIALOG_HPP
+#ifndef SAVECOMMANDDIALOG_H
+#define SAVECOMMANDDIALOG_H
 
 #include <QDialog>
 
@@ -37,4 +37,4 @@ private:
   Ui::SaveCommandDialog *ui;
 };
 
-#endif // SAVECOMMANDDIALOG_HPP
+#endif // SAVECOMMANDDIALOG_H

@@ -24,7 +24,7 @@
 #include "TaskExecutor.hpp"
 #include "Utils.hpp"
 #include "commandscriptdialog.hpp"
-#include "savecommanddialog.hpp"
+#include "SaveCommandDialog.hpp"
 
 static void initPortParam(const Ui::MainWindow *ui) {
   // 获取电脑串口
