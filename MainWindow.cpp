@@ -26,167 +26,7 @@
 #include "taskexecutor.hpp"
 #include "utils.hpp"
 
-static void setComboxBoxStyle(const Ui::MainWindow *ui) {
-  const auto materialComboBoxStyle = R"(
-        QComboBox {
-            background-color: #FFFFFF;
-            color: #212121;
-            border-radius: 4px;
-            padding: 4px 6px;
-            border: 1px solid #BDBDBD;
-            selection-background-color: #6200EE;
-            font: 9pt "微软雅黑";
-        }
-
-        QComboBox::down-arrow {
-            image: url(:/ic_down_arrow.png);
-            width: 16px;
-            height: 16px;
-        }
-
-        QComboBox::drop-down {
-            subcontrol-origin: padding;
-            subcontrol-position: top right;
-            width: 30px;
-            border-left: 1px solid #BDBDBD;
-            background-color: transparent;
-        }
-
-        QComboBox:hover {
-            border-color: #757575;
-        }
-
-        QComboBox:pressed {
-            background-color: #EEEEEE;
-        }
-
-        QComboBox:disabled {
-            background-color: #E0E0E0;
-            color: #9E9E9E;
-            border-color: #BDBDBD;
-        }
-
-        QComboBox QAbstractItemView {
-            outline: 0px;
-            background-color: white;
-            color: #212121;
-            border: 1px solid #BDBDBD;
-            selection-background-color: #E0E0E0;
-            selection-color: #212121;
-        }
-    )";
-
-  auto applyStyle = [=](QComboBox *comboBox) {
-    comboBox->setStyleSheet(materialComboBoxStyle);
-    comboBox->setItemDelegate(new ComboBoxItemDelegate(comboBox));
-  };
-
-  applyStyle(ui->portNameBox);
-  applyStyle(ui->baudRateBox);
-  applyStyle(ui->dataBitBox);
-  applyStyle(ui->parityBitBox);
-  applyStyle(ui->stopBitBox);
-}
-
-static void setCheckBoxStyle(const Ui::MainWindow *ui) {
-  const auto materialCheckBoxStyle = R"(
-        QCheckBox {
-            spacing: 5px;
-            color: #212121;
-            font: 10pt "微软雅黑";
-        }
-
-        QCheckBox::indicator {
-            width: 12px;
-            height: 12px;
-            background-color: #FFFFFF;
-            border: 1px solid #9E9E9E;
-            border-radius: 4px;
-            padding: 2px;
-        }
-
-        QCheckBox::indicator:checked {
-            background-color: #6200EE;
-            border: 1px solid #6200EE;
-            image: url(:/ic_check.png);
-        }
-
-        QCheckBox::indicator:hover {
-            border: 1px solid #757575;
-        }
-
-        QCheckBox::indicator:disabled {
-            background-color: #E0E0E0;
-            border: 1px solid #BDBDBD;
-        }
-    )";
-
-  auto applyStyle = [=](QCheckBox *checkBox) {
-    checkBox->setStyleSheet(materialCheckBoxStyle);
-  };
-
-  applyStyle(ui->timeCheckBox);
-  applyStyle(ui->hexReceiveCheckBox);
-  applyStyle(ui->hexSendCheckBox);
-}
-
-static void setPlainTextEditStyle(const Ui::MainWindow *ui) {
-  const auto materialPlainTextEditStyle = R"(
-        QPlainTextEdit {
-            background-color: #FFFFFF;
-            color: #212121;
-            border-radius: 4px;
-            padding: 0px 2px;
-            border: 1px solid #BDBDBD;
-            font: 10pt "微软雅黑"
-        }
-
-        QPlainTextEdit:focus {
-            border: 1px solid #6200EE
-        }
-
-        QPlainTextEdit:hover {
-            border-color: #757575
-        }
-
-        QPlainTextEdit:disabled {
-            background-color: #E0E0E0;
-            color: #9E9E9E;
-            border-color: #BDBDBD
-        }
-
-        QScrollBar:vertical {
-            background-color: #F5F5F5;
-            width: 12px;
-            margin: 0px 0px 0px 0px
-        }
-
-        QScrollBar::handle:vertical {
-            background-color: #BDBDBD;
-            min-height: 20px;
-            border-radius: 6px
-        }
-
-        QScrollBar::add-line:vertical,
-        QScrollBar::sub-line:vertical {
-            background-color: transparent
-        }
-
-        QScrollBar::add-page:vertical,
-        QScrollBar::sub-page:vertical {
-            background-color: transparent
-        }
-    )";
-
-  auto applyStyle = [=](QPlainTextEdit *textEdit) {
-    textEdit->setStyleSheet(materialPlainTextEditStyle);
-  };
-
-  applyStyle(ui->comMessageView);
-  applyStyle(ui->userInputView);
-}
-
-static void initParam(const Ui::MainWindow *ui) {
+static void initPortParam(const Ui::MainWindow *ui) {
   // 获取电脑串口
   const auto &ports = QSerialPortInfo::availablePorts();
   for (const QSerialPortInfo &port : ports) {
@@ -194,7 +34,7 @@ static void initParam(const Ui::MainWindow *ui) {
   }
 
   if (ui->portNameBox->count() == 0) {
-    ui->portNameBox->addItem("No serial ports available");
+    ui->portNameBox->addItem("No port available");
   }
 
   // 设置波特率
@@ -232,11 +72,7 @@ MainWindow::MainWindow(QMainWindow *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), _logger("MainWindow") {
   ui->setupUi(this);
 
-  setComboxBoxStyle(ui);
-  setCheckBoxStyle(ui);
-  setPlainTextEditStyle(ui);
-
-  initParam(ui);
+  initPortParam(ui);
 
   const QStringList headerLabels = {"指令值", "备注"};
 
@@ -251,12 +87,13 @@ MainWindow::MainWindow(QMainWindow *parent)
   }
 
   // ui渲染完之后获取tableWidget真实宽度
-  QTimer::singleShot(0, this, [this] {
-    int indexColumnWidth = ui->tableWidget->verticalHeader()->width();
-    const int availableWidth = ui->tableWidget->width() - indexColumnWidth;
-    ui->tableWidget->setColumnWidth(0, static_cast<int>(availableWidth * 0.7));
-    ui->tableWidget->setColumnWidth(1, static_cast<int>(availableWidth * 0.3));
-  });
+  // QTimer::singleShot(0, this, [this] {
+  //   int indexColumnWidth = ui->tableWidget->verticalHeader()->width();
+  //   const int availableWidth = ui->tableWidget->width() - indexColumnWidth;
+  //   ui->tableWidget->setColumnWidth(0, static_cast<int>(availableWidth *
+  //   0.7)); ui->tableWidget->setColumnWidth(1, static_cast<int>(availableWidth
+  //   * 0.3));
+  // });
   for (int row = 0; row < ui->tableWidget->rowCount(); ++row) {
     QTableWidgetItem *item = ui->tableWidget->item(row, 1);
     if (item) {
@@ -309,7 +146,6 @@ void MainWindow::onOpenPortButtonClicked() {
     SerialPortObserver::get()->close();
     ui->openPortButton->setText("打开串口");
     updateComboxState(false);
-    updateConnectState(false);
     uncheckTimeCheckBox();
     if (timer && timer->isActive()) {
       timer->stop();
@@ -333,33 +169,10 @@ void MainWindow::onOpenPortButtonClicked() {
     if (ret) {
       ui->openPortButton->setText("关闭串口");
       updateComboxState(true);
-      updateConnectState(true);
     } else {
       QMessageBox::critical(this, "错误", "打开失败，请检查参数设置和串口连接");
     }
   }
-}
-
-void MainWindow::updateConnectState(const bool connected) const {
-  QString materialLabelStyle;
-  if (connected) {
-    // 已连接
-    materialLabelStyle = R"(
-            QLabel {
-                background-color: #0EB83A;
-                border-radius: 8px;
-            }
-        )";
-  } else {
-    // 已断开
-    materialLabelStyle = R"(
-            QLabel {
-                background-color: #EF5350;
-                border-radius: 8px;
-            }
-        )";
-  }
-  ui->stateView->setStyleSheet(materialLabelStyle);
 }
 
 void MainWindow::slotDataReceived(const QByteArray &data) {

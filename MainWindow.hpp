@@ -43,8 +43,6 @@ private:
 
   void onOpenPortButtonClicked();
 
-  void updateConnectState(bool connected) const;
-
   void onRefreshButtonClicked();
 
   void onSaveDataButtonClicked();
