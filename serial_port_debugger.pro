@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     CommandItemWidget.cpp \
+    CommandScriptDialog.cpp \
     DatabaseWrapper.cpp \
     DebuggerApplication.cpp \
     Logger.cpp \
@@ -19,11 +20,11 @@ SOURCES += \
     SerialPortObserver.cpp \
     TaskExecutor.cpp \
     Utils.cpp \
-    commandscriptdialog.cpp \
     main.cpp
 
 HEADERS += \
     CommandItemWidget.hpp \
+    CommandScriptDialog.hpp \
     DatabaseWrapper.hpp \
     DebuggerApplication.hpp \
     GlobalDefinition.hpp \
@@ -33,13 +34,12 @@ HEADERS += \
     SerialPortManager.hpp \
     SerialPortObserver.hpp \
     TaskExecutor.hpp \
-    Utils.hpp \
-    commandscriptdialog.hpp
+    Utils.hpp
 
 FORMS += \
+    CommandScriptDialog.ui \
     MainWindow.ui \
-    SaveCommandDialog.ui \
-    commandscriptdialog.ui
+    SaveCommandDialog.ui
 
 RESOURCES += \
     font.qrc \

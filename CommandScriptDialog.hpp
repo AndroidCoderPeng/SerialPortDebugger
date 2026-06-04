@@ -1,5 +1,5 @@
-#ifndef COMMANDSCRIPTDIALOG_HPP
-#define COMMANDSCRIPTDIALOG_HPP
+#ifndef COMMANDSCRIPTDIALOG_H
+#define COMMANDSCRIPTDIALOG_H
 
 #include <QDialog>
 #include <QItemSelection>
@@ -35,4 +35,4 @@ private:
   QStandardItemModel *commandItemModel;
 };
 
-#endif // COMMANDSCRIPTDIALOG_HPP
+#endif // COMMANDSCRIPTDIALOG_H

@@ -31,7 +31,7 @@
      <x>31</x>
      <y>24</y>
      <width>341</width>
-     <height>151</height>
+     <height>153</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -51,9 +51,6 @@
           <height>0</height>
          </size>
         </property>
-        <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
-        </property>
         <property name="text">
          <string>指令值</string>
         </property>
@@ -61,18 +58,6 @@
       </item>
       <item>
        <widget class="QPlainTextEdit" name="commandValueView">
-        <property name="styleSheet">
-         <string notr="true">QPlainTextEdit {background-color:#FFFFFF;color:#212121;border-radius:4px;padding:0px 2px;border:1px solid #BDBDBD;font:10pt &quot;微软雅黑&quot;}
-QPlainTextEdit:focus {border:1px solid #6200EE}
-QPlainTextEdit:hover {border-color:#757575}
-QPlainTextEdit:disabled {background-color:#E0E0E0;color:#9E9E9E;border-color:#BDBDBD}
-QScrollBar:vertical {background-color:#F5F5F5;width:12px;margin:0px 0px 0px 0px}
-QScrollBar::handle:vertical {background-color:#BDBDBD;min-height:20px;border-radius:6px}
-QScrollBar::add-line:vertical,
-QScrollBar::sub-line:vertical {background-color:transparent}
-QScrollBar::add-page:vertical,
-QScrollBar::sub-page:vertical {background-color:transparent}</string>
-        </property>
         <property name="placeholderText">
          <string>请输入16进制格式的指令</string>
         </property>
@@ -99,9 +84,6 @@ QScrollBar::sub-page:vertical {background-color:transparent}</string>
           <height>0</height>
          </size>
         </property>
-        <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
-        </property>
         <property name="text">
          <string>备注</string>
         </property>
@@ -109,13 +91,6 @@ QScrollBar::sub-page:vertical {background-color:transparent}</string>
       </item>
       <item>
        <widget class="QLineEdit" name="remarkValueView">
-        <property name="styleSheet">
-         <string notr="true">QLineEdit {border:1px solid #757575;border-radius:4px;padding:3px;background-color:white;color:#212121;font:10pt &quot;微软雅黑&quot;}
-QLineEdit:hover {border-color:#6200EE}
-QLineEdit:focus {border-color:#6200EE}
-QLineEdit:disabled {background-color:#E0E0E0;color:#BDBDBD;border-color:#BDBDBD}
-QLineEdit::placeholder {color:#757575}</string>
-        </property>
         <property name="text">
          <string/>
         </property>
@@ -155,12 +130,6 @@ QLineEdit::placeholder {color:#757575}</string>
           <height>0</height>
          </size>
         </property>
-        <property name="styleSheet">
-         <string notr="true">QPushButton {background-color:#2196F3;border-radius:4px;color:white;padding:5px;font:10pt &quot;微软雅黑&quot;}
-QPushButton:hover {background-color:#1E88E5}
-QPushButton:pressed {background-color:#1976D2}
-QPushButton:disabled {background-color:#BDBDBD;color:#EEEEEE}</string>
-        </property>
         <property name="text">
          <string>保存</string>
         </property>
@@ -173,12 +142,6 @@ QPushButton:disabled {background-color:#BDBDBD;color:#EEEEEE}</string>
           <width>90</width>
           <height>0</height>
          </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QPushButton {background-color:#FF9800;border-radius:4px;color:white;padding:5px;font:10pt &quot;微软雅黑&quot;}
-QPushButton:hover {background-color:#F57C00}
-QPushButton:pressed {background-color:#EF6C00}
-QPushButton:disabled {background-color:#BDBDBD;color:#EEEEEE}</string>
         </property>
         <property name="text">
          <string>取消</string>

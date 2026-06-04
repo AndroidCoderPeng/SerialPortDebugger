@@ -1,5 +1,5 @@
-#include "commandscriptdialog.hpp"
-#include "ui_commandscriptdialog.h"
+#include "CommandScriptDialog.hpp"
+#include "ui_CommandScriptDialog.h"
 
 #include <QMessageBox>
 

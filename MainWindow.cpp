@@ -23,7 +23,7 @@
 #include "SerialPortManager.hpp"
 #include "TaskExecutor.hpp"
 #include "Utils.hpp"
-#include "commandscriptdialog.hpp"
+#include "CommandScriptDialog.hpp"
 #include "SaveCommandDialog.hpp"
 
 static void initPortParam(const Ui::MainWindow *ui) {

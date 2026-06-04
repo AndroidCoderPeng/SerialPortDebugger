@@ -37,19 +37,6 @@
    <property name="acceptDrops">
     <bool>true</bool>
    </property>
-   <property name="styleSheet">
-    <string notr="true">QListView {background-color:#FFFFFF;border:1px solid #E0E0E0;border-radius:8px;padding:2px;outline:0px;font:10pt &quot;微软雅黑&quot;}
-QListView::item {padding:6px 5px;border-bottom:1px solid #EEEEEE}
-QListView::item:last {border-bottom:none}
-QListView::item:hover {background-color:#F5F5F5;color:#212121}
-QListView::item:selected {background-color:#E3F2FD;color:#1565C0;font-weight:bold}
-QScrollBar:vertical {background-color:transparent;width:8px;margin:0px 0px 0px 0px}
-QScrollBar::handle:vertical {background-color:#BDBDBD;min-height:20px;border-radius:4px}
-QScrollBar::add-line:vertical,
-QScrollBar::sub-line:vertical {background-color:transparent}
-QScrollBar::add-page:vertical,
-QScrollBar::sub-page:vertical {background-color:transparent}</string>
-   </property>
    <property name="selectionMode">
     <enum>QAbstractItemView::MultiSelection</enum>
    </property>
@@ -69,9 +56,6 @@ QScrollBar::sub-page:vertical {background-color:transparent}</string>
     </property>
     <item>
      <widget class="QLabel" name="label_2">
-      <property name="styleSheet">
-       <string notr="true">QLabel {font:10pt &quot;微软雅黑&quot;}</string>
-      </property>
       <property name="text">
        <string>时间间隔（毫秒）</string>
       </property>
@@ -84,13 +68,6 @@ QScrollBar::sub-page:vertical {background-color:transparent}</string>
         <width>60</width>
         <height>16777215</height>
        </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QLineEdit {border:1px solid #757575;border-radius:4px;padding:1px 3px;background-color:white;color:#212121;font:10pt &quot;微软雅黑&quot;}
-QLineEdit:hover {border-color:#6200EE}
-QLineEdit:focus {border-color:#6200EE}
-QLineEdit:disabled {background-color:#E0E0E0;color:#BDBDBD;border-color:#BDBDBD}
-QLineEdit::placeholder {color:#757575}</string>
       </property>
       <property name="inputMethodHints">
        <set>Qt::ImhNone</set>
@@ -124,12 +101,6 @@ QLineEdit::placeholder {color:#757575}</string>
         <height>0</height>
        </size>
       </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {background-color:#2196F3;border-radius:4px;color:white;padding:5px;font:10pt &quot;微软雅黑&quot;}
-QPushButton:hover {background-color:#1E88E5}
-QPushButton:pressed {background-color:#1976D2}
-QPushButton:disabled {background-color:#BDBDBD;color:#EEEEEE}</string>
-      </property>
       <property name="text">
        <string>确定</string>
       </property>
@@ -142,12 +113,6 @@ QPushButton:disabled {background-color:#BDBDBD;color:#EEEEEE}</string>
         <width>90</width>
         <height>0</height>
        </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {background-color:#FF9800;border-radius:4px;color:white;padding:5px;font:10pt &quot;微软雅黑&quot;}
-QPushButton:hover {background-color:#F57C00}
-QPushButton:pressed {background-color:#EF6C00}
-QPushButton:disabled {background-color:#BDBDBD;color:#EEEEEE}</string>
       </property>
       <property name="text">
        <string>取消</string>
@@ -164,13 +129,6 @@ QPushButton:disabled {background-color:#BDBDBD;color:#EEEEEE}</string>
      <width>411</width>
      <height>41</height>
     </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QListWidget {background-color:#FFFFFF;border:1px solid #E0E0E0;border-radius:8px;padding:2px;outline:0px;font:10pt &quot;微软雅黑&quot;}
-QListWidget::item {padding:6px 5px;border-bottom:1px solid #EEEEEE}
-QListWidget::item:last-child {border-bottom:none}
-QListWidget::item:hover {background-color:#F5F5F5;color:#212121}
-QListWidget::item:selected {background-color:#E3F2FD;color:#1565C0;font-weight:bold}</string>
    </property>
    <property name="verticalScrollBarPolicy">
     <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -193,9 +151,6 @@ QListWidget::item:selected {background-color:#E3F2FD;color:#1565C0;font-weight:b
      <width>143</width>
      <height>18</height>
     </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QLabel {font:10pt &quot;微软雅黑&quot;}</string>
    </property>
    <property name="text">
     <string>拖动更改指令执行的顺序</string>
