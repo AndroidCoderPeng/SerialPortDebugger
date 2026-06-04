@@ -9,6 +9,7 @@
 #include <QMainWindow>
 
 #include "Logger.hpp"
+#include "TaskExecutor.hpp"
 #include "com_message.hpp"
 
 QT_BEGIN_NAMESPACE
@@ -33,9 +34,10 @@ public slots:
 private:
   Ui::MainWindow *ui;
   Logger _logger;
-  QByteArray bufferReceived;
+  TaskExecutor *executorPtr = nullptr;
+
   QList<ComMessage> history;
-  QTimer *timer = nullptr;
+  QTimer *timerPtr = nullptr;
 
   void updateComboxState(bool disabled) const;
 

@@ -69,7 +69,8 @@ static void initPortParam(const Ui::MainWindow *ui) {
 }
 
 MainWindow::MainWindow(QMainWindow *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), _logger("MainWindow") {
+    : QMainWindow(parent), ui(new Ui::MainWindow), _logger("MainWindow"),
+      executorPtr(nullptr) {
   ui->setupUi(this);
 
   initPortParam(ui);
@@ -127,8 +128,8 @@ void MainWindow::onOpenPortButtonClicked() {
     ui->openPortButton->setText("打开串口");
     updateComboxState(false);
     uncheckTimeCheckBox();
-    if (timer && timer->isActive()) {
-      timer->stop();
+    if (timerPtr && timerPtr->isActive()) {
+      timerPtr->stop();
     }
   } else {
     const QString portName = ui->portNameBox->currentText();
@@ -387,13 +388,17 @@ void MainWindow::onScriptButtonClicked() {
   if (dialog.exec() == QDialog::Accepted) {
     // 获取脚本参数，然后按照脚本执行命令
     const auto configs = dialog.getScriptConfigs();
-    TaskExecutor *executor = new TaskExecutor(this);
+    executorPtr = new TaskExecutor(this);
+    QList<Task> tasks;
     for (const ScriptConfig &config : configs) {
-      executor->addTask(config.getCommand(), config.getInterval());
+      tasks.append({config.getCommand(), config.getInterval()});
     }
-    connect(executor, &TaskExecutor::taskExecuted, this,
+    executorPtr->setTasks(tasks);
+    connect(executorPtr, &TaskExecutor::taskExecuted, this,
             [this](const QString &command) { sendCommand(command); });
-    executor->start();
+    connect(executorPtr, &TaskExecutor::finished, executorPtr,
+            &QObject::deleteLater);
+    executorPtr->start();
   }
 }
 
@@ -411,17 +416,17 @@ void MainWindow::onTimeCheckBoxStateChanged(const qint16 &state) {
       return;
     }
 
-    if (!timer) {
-      timer = new QTimer(this);
-      connect(timer, &QTimer::timeout, this, [this] {
+    if (!timerPtr) {
+      timerPtr = new QTimer(this);
+      connect(timerPtr, &QTimer::timeout, this, [this] {
         const auto command = ui->userInputView->text();
         sendCommand(command);
       });
     }
-    timer->start(time.toInt());
+    timerPtr->start(time.toInt());
   } else if (state == Qt::Unchecked) {
-    if (timer && timer->isActive()) {
-      timer->stop();
+    if (timerPtr && timerPtr->isActive()) {
+      timerPtr->stop();
     }
   } else {
     qDebug() << "无效的状态值：" << state;
