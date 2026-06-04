@@ -227,16 +227,24 @@ void MainWindow::onAddCommandButtonClicked() {
 
 void MainWindow::updateCommandWidget(const qint16 &id, const QString &command,
                                      const QString &remark) {
-  CommandItemWidget *itemWidget = new CommandItemWidget(command, remark);
-  QListWidgetItem *listItem = new QListWidgetItem(ui->listWidget);
+  auto *listItem = new QListWidgetItem(ui->listWidget);
+  listItem->setData(Qt::UserRole, id);
+  listItem->setFlags(listItem->flags() & ~Qt::ItemIsEditable);
+
+  auto *itemWidget = new CommandItemWidget(command, remark, ui->listWidget);
   listItem->setSizeHint(itemWidget->sizeHint());
-  listItem->setData(Qt::UserRole, QVariant::fromValue(id));
-  ui->listWidget->addItem(listItem);
   ui->listWidget->setItemWidget(listItem, itemWidget);
 }
 
 void MainWindow::onCommandItemClicked(const QListWidgetItem *item) {
-  ui->userInputView->setPlainText(item->text());
+  auto *listItem = const_cast<QListWidgetItem *>(item);
+  auto *itemWidget =
+      qobject_cast<CommandItemWidget *>(ui->listWidget->itemWidget(listItem));
+  if (!itemWidget) {
+    return;
+  }
+
+  ui->userInputView->setPlainText(itemWidget->command());
 }
 
 void MainWindow::showCommandWidgetContextMenu(const QPoint &pos) {
@@ -266,42 +274,45 @@ void MainWindow::showCommandWidgetContextMenu(const QPoint &pos) {
 
 void MainWindow::onCustomAction(const QListWidgetItem *item,
                                 const QString &message) {
-  // const int id = item->data(Qt::UserRole).value<qint16>();
-  // const int row = item->row();
-  // const QString command = ui->tableWidget->item(row, 0)->text();
-  // if (message == "0") {
-  //   sendCommand(command);
-  // } else if (message == "1") {
-  //   QClipboard *clipboard = QApplication::clipboard();
-  //   clipboard->setText(command);
-  // } else if (message == "2") {
-  //   const QString remark = ui->tableWidget->item(row, 1)->text();
-  //   SaveCommandDialog dialog(this, command, remark);
-  //   if (dialog.exec() == QDialog::Accepted) {
-  //     const auto newCommand = dialog.getInputValue();
-  //     const auto &newValue = newCommand.getValue();
-  //     const auto &newRemark = newCommand.getRemark();
+  auto *listItem = const_cast<QListWidgetItem *>(item);
+  auto *itemWidget =
+      qobject_cast<CommandItemWidget *>(ui->listWidget->itemWidget(listItem));
+  if (!itemWidget) {
+    return;
+  }
 
-  //     // 检查是否重复
-  //     if (DatabaseWrapper::get()->commandExists(newValue) &&
-  //         newValue != command) {
-  //       QMessageBox::warning(this, "警告", "该指令值已存在！");
-  //       return;
-  //     }
+  const int id = item->data(Qt::UserRole).toInt();
+  const QString command = itemWidget->command();
+  const QString remark = itemWidget->remark();
 
-  //     // 更新数据库
-  //     DatabaseWrapper::get()->updateCommand(id, newValue, newRemark);
+  if (message == "0") {
+    sendCommand(command);
+  } else if (message == "1") {
+    QApplication::clipboard()->setText(command);
+  } else if (message == "2") {
+    SaveCommandDialog dialog(this, command, remark);
+    if (dialog.exec() == QDialog::Accepted) {
+      const auto newCommand = dialog.getInputValue();
+      const auto &newValue = newCommand.getValue();
+      const auto &newRemark = newCommand.getRemark();
 
-  //     // 更新表格显示
-  //     QTableWidgetItem *cmdItem = ui->tableWidget->item(row, 0);
-  //     cmdItem->setText(newValue);
-  //     QTableWidgetItem *rmkItem = ui->tableWidget->item(row, 1);
-  //     rmkItem->setText(newRemark);
-  //   }
-  // } else if (message == "3") {
-  //   DatabaseWrapper::get()->deleteCommand(id);
-  //   ui->tableWidget->removeRow(item->row());
-  // }
+      // 检查是否重复
+      if (DatabaseWrapper::get()->commandExists(newValue) &&
+          newValue != command) {
+        QMessageBox::warning(this, "警告", "该指令值已存在！");
+        return;
+      }
+
+      // 更新数据库
+      DatabaseWrapper::get()->updateCommand(id, newValue, newRemark);
+
+      // 更新表格显示
+      itemWidget->setContent(newValue, newRemark);
+    }
+  } else if (message == "3") {
+    DatabaseWrapper::get()->deleteCommand(id);
+    delete ui->listWidget->takeItem(ui->listWidget->row(listItem));
+  }
 }
 
 void MainWindow::onSendCommandButtonClicked() {

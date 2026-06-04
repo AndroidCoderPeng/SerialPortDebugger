@@ -33,8 +33,6 @@ public slots:
 private:
   Ui::MainWindow *ui;
   Logger _logger;
-  QListWidgetItem *commandItem = nullptr;
-  QListWidgetItem *remarkItem = nullptr;
   QByteArray bufferReceived;
   QList<ComMessage> history;
   QTimer *timer = nullptr;
