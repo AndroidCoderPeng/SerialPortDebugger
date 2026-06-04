@@ -108,7 +108,7 @@
       </item>
       <item row="9" column="0" colspan="5">
        <widget class="QListWidget" name="listWidget">
-        <property name="horizontalScrollBarPolicy">
+        <property name="verticalScrollBarPolicy">
          <enum>Qt::ScrollBarAlwaysOff</enum>
         </property>
        </widget>

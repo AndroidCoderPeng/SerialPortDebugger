@@ -18,6 +18,7 @@
 #include <QSqlQuery>
 #include <QTimer>
 
+#include "CommandItemWidget.hpp"
 #include "DatabaseWrapper.hpp"
 #include "SerialPortObserver.hpp"
 #include "combo_box_item_delegate.hpp"
@@ -80,12 +81,6 @@ MainWindow::MainWindow(QMainWindow *parent)
     updateCommandWidget(cmd.id, cmd.value, cmd.remark);
   }
 
-  // for (int row = 0; row < ui->listWidget->count(); ++row) {
-  //   QListWidgetItem *item = ui->listWidget->item(row);
-  //   if (item) {
-  //     item->setTextAlignment(Qt::AlignCenter);
-  //   }
-  // }
   ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
   QIntValidator *validator = new QIntValidator(1, 99999);
@@ -232,12 +227,12 @@ void MainWindow::onAddCommandButtonClicked() {
 
 void MainWindow::updateCommandWidget(const qint16 &id, const QString &command,
                                      const QString &remark) {
-  auto *item = new QListWidgetItem(command + "\n" + remark);
-  item->setData(Qt::UserRole, id);
-  item->setData(Qt::UserRole + 1, command);
-  item->setData(Qt::UserRole + 2, remark);
-  item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-  ui->listWidget->addItem(item);
+  CommandItemWidget *itemWidget = new CommandItemWidget(command, remark);
+  QListWidgetItem *listItem = new QListWidgetItem(ui->listWidget);
+  listItem->setSizeHint(itemWidget->sizeHint());
+  listItem->setData(Qt::UserRole, QVariant::fromValue(id));
+  ui->listWidget->addItem(listItem);
+  ui->listWidget->setItemWidget(listItem, itemWidget);
 }
 
 void MainWindow::onCommandItemClicked(const QListWidgetItem *item) {
