@@ -5,8 +5,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QListWidgetItem>
 #include <QMainWindow>
-#include <QTableWidgetItem>
 
 #include "Logger.hpp"
 #include "com_message.hpp"
@@ -33,8 +33,8 @@ public slots:
 private:
   Ui::MainWindow *ui;
   Logger _logger;
-  QTableWidgetItem *commandItem = nullptr;
-  QTableWidgetItem *remarkItem = nullptr;
+  QListWidgetItem *commandItem = nullptr;
+  QListWidgetItem *remarkItem = nullptr;
   QByteArray bufferReceived;
   QList<ComMessage> history;
   QTimer *timer = nullptr;
@@ -51,14 +51,14 @@ private:
 
   void onAddCommandButtonClicked();
 
-  void onTableItemClicked(const QTableWidgetItem *item);
+  void onCommandItemClicked(const QListWidgetItem *item);
 
-  void updateCommandTableWidget(const qint16 &id, const QString &command,
-                                const QString &remark);
+  void updateCommandWidget(const qint16 &id, const QString &command,
+                           const QString &remark);
 
-  void showTableWidgetContextMenu(const QPoint &pos);
+  void showCommandWidgetContextMenu(const QPoint &pos);
 
-  void onCustomAction(const QTableWidgetItem *item, const QString &message);
+  void onCustomAction(const QListWidgetItem *item, const QString &message);
 
   void onSendCommandButtonClicked();
 

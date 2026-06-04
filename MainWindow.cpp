@@ -74,33 +74,19 @@ MainWindow::MainWindow(QMainWindow *parent)
 
   initPortParam(ui);
 
-  const QStringList headerLabels = {"指令值", "备注"};
-
-  ui->tableWidget->setHorizontalHeaderLabels(headerLabels);
-  // 序号文字居中
-  ui->tableWidget->verticalHeader()->setDefaultAlignment(Qt::AlignCenter);
-
   DatabaseWrapper::get()->init();
   const auto commands = DatabaseWrapper::get()->getAllCommands();
   for (const auto &cmd : commands) {
-    updateCommandTableWidget(cmd.id, cmd.value, cmd.remark);
+    updateCommandWidget(cmd.id, cmd.value, cmd.remark);
   }
 
-  // ui渲染完之后获取tableWidget真实宽度
-  // QTimer::singleShot(0, this, [this] {
-  //   int indexColumnWidth = ui->tableWidget->verticalHeader()->width();
-  //   const int availableWidth = ui->tableWidget->width() - indexColumnWidth;
-  //   ui->tableWidget->setColumnWidth(0, static_cast<int>(availableWidth *
-  //   0.7)); ui->tableWidget->setColumnWidth(1, static_cast<int>(availableWidth
-  //   * 0.3));
-  // });
-  for (int row = 0; row < ui->tableWidget->rowCount(); ++row) {
-    QTableWidgetItem *item = ui->tableWidget->item(row, 1);
-    if (item) {
-      item->setTextAlignment(Qt::AlignCenter);
-    }
-  }
-  ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+  // for (int row = 0; row < ui->listWidget->count(); ++row) {
+  //   QListWidgetItem *item = ui->listWidget->item(row);
+  //   if (item) {
+  //     item->setTextAlignment(Qt::AlignCenter);
+  //   }
+  // }
+  ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
   QIntValidator *validator = new QIntValidator(1, 99999);
   ui->timeLineEdit->setValidator(validator);
@@ -115,10 +101,10 @@ MainWindow::MainWindow(QMainWindow *parent)
           &MainWindow::onClearDataButtonClicked);
   connect(ui->addCommandButton, &QPushButton::clicked, this,
           &MainWindow::onAddCommandButtonClicked);
-  connect(ui->tableWidget, &QTableWidget::itemClicked, this,
-          &MainWindow::onTableItemClicked);
-  connect(ui->tableWidget, &QTableWidget::customContextMenuRequested, this,
-          &MainWindow::showTableWidgetContextMenu);
+  connect(ui->listWidget, &QListWidget::itemClicked, this,
+          &MainWindow::onCommandItemClicked);
+  connect(ui->listWidget, &QListWidget::customContextMenuRequested, this,
+          &MainWindow::showCommandWidgetContextMenu);
   connect(ui->sendDataButton, &QPushButton::clicked, this,
           &MainWindow::onSendCommandButtonClicked);
   connect(ui->scriptButton, &QPushButton::clicked, this,
@@ -235,61 +221,41 @@ void MainWindow::onAddCommandButtonClicked() {
 
     // 插入到数据库
     DatabaseWrapper::get()->addCommand(value, remark);
-    // 重新加载表格
-    ui->tableWidget->setRowCount(0);
+    // 重新加载列表
+    ui->listWidget->clear();
     const auto commands = DatabaseWrapper::get()->getAllCommands();
     for (const auto &cmd : commands) {
-      updateCommandTableWidget(cmd.id, cmd.value, cmd.remark);
+      updateCommandWidget(cmd.id, cmd.value, cmd.remark);
     }
   }
 }
 
-void MainWindow::updateCommandTableWidget(const qint16 &id,
-                                          const QString &command,
-                                          const QString &remark) {
-  const int row = ui->tableWidget->rowCount();
-  ui->tableWidget->insertRow(row);
-
-  commandItem = new QTableWidgetItem(command);
-  ui->tableWidget->setItem(row, 0, commandItem);
-
-  remarkItem = new QTableWidgetItem(remark);
-  remarkItem->setTextAlignment(Qt::AlignCenter);
-  ui->tableWidget->setItem(row, 1, remarkItem);
-
-  // 禁用双击显示编辑框
-  commandItem->setFlags(commandItem->flags() & ~Qt::ItemIsEditable);
-  remarkItem->setFlags(remarkItem->flags() & ~Qt::ItemIsEditable);
-
-  // item绑定数据库主键ID
-  commandItem->setData(Qt::UserRole, id);
-  remarkItem->setData(Qt::UserRole, id);
+void MainWindow::updateCommandWidget(const qint16 &id, const QString &command,
+                                     const QString &remark) {
+  auto *item = new QListWidgetItem(command + "\n" + remark);
+  item->setData(Qt::UserRole, id);
+  item->setData(Qt::UserRole + 1, command);
+  item->setData(Qt::UserRole + 2, remark);
+  item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+  ui->listWidget->addItem(item);
 }
 
-void MainWindow::onTableItemClicked(const QTableWidgetItem *item) {
-  const int row = item->row();
-  const QString command = ui->tableWidget->item(row, 0)->text();
-  ui->userInputView->setPlainText(command);
+void MainWindow::onCommandItemClicked(const QListWidgetItem *item) {
+  ui->userInputView->setPlainText(item->text());
 }
 
-void MainWindow::showTableWidgetContextMenu(const QPoint &pos) {
-  const auto tableWidget = qobject_cast<QTableWidget *>(sender());
-  if (tableWidget) {
-    const QTableWidgetItem *item = tableWidget->itemAt(pos);
+void MainWindow::showCommandWidgetContextMenu(const QPoint &pos) {
+  const auto listWidget = qobject_cast<QListWidget *>(sender());
+  if (listWidget) {
+    const QListWidgetItem *item = listWidget->itemAt(pos);
     if (item != nullptr) {
       QMenu menu(this);
-      const auto materialQMenuStyle = R"(
-            QMenu {
-                font: 10pt '微软雅黑';
-            }
-        )";
-      menu.setStyleSheet(materialQMenuStyle);
       const QAction *sendAction = menu.addAction("发送");
       const QAction *copyAction = menu.addAction("复制");
       const QAction *editAction = menu.addAction("编辑");
       const QAction *deleteAction = menu.addAction("删除");
       const QAction *selectedAction =
-          menu.exec(tableWidget->viewport()->mapToGlobal(pos));
+          menu.exec(listWidget->viewport()->mapToGlobal(pos));
       if (selectedAction == sendAction) {
         onCustomAction(item, "0");
       } else if (selectedAction == copyAction) {
@@ -303,44 +269,44 @@ void MainWindow::showTableWidgetContextMenu(const QPoint &pos) {
   }
 }
 
-void MainWindow::onCustomAction(const QTableWidgetItem *item,
+void MainWindow::onCustomAction(const QListWidgetItem *item,
                                 const QString &message) {
-  const int id = item->data(Qt::UserRole).value<qint16>();
-  const int row = item->row();
-  const QString command = ui->tableWidget->item(row, 0)->text();
-  if (message == "0") {
-    sendCommand(command);
-  } else if (message == "1") {
-    QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText(command);
-  } else if (message == "2") {
-    const QString remark = ui->tableWidget->item(row, 1)->text();
-    SaveCommandDialog dialog(this, command, remark);
-    if (dialog.exec() == QDialog::Accepted) {
-      const auto newCommand = dialog.getInputValue();
-      const auto &newValue = newCommand.getValue();
-      const auto &newRemark = newCommand.getRemark();
+  // const int id = item->data(Qt::UserRole).value<qint16>();
+  // const int row = item->row();
+  // const QString command = ui->tableWidget->item(row, 0)->text();
+  // if (message == "0") {
+  //   sendCommand(command);
+  // } else if (message == "1") {
+  //   QClipboard *clipboard = QApplication::clipboard();
+  //   clipboard->setText(command);
+  // } else if (message == "2") {
+  //   const QString remark = ui->tableWidget->item(row, 1)->text();
+  //   SaveCommandDialog dialog(this, command, remark);
+  //   if (dialog.exec() == QDialog::Accepted) {
+  //     const auto newCommand = dialog.getInputValue();
+  //     const auto &newValue = newCommand.getValue();
+  //     const auto &newRemark = newCommand.getRemark();
 
-      // 检查是否重复
-      if (DatabaseWrapper::get()->commandExists(newValue) &&
-          newValue != command) {
-        QMessageBox::warning(this, "警告", "该指令值已存在！");
-        return;
-      }
+  //     // 检查是否重复
+  //     if (DatabaseWrapper::get()->commandExists(newValue) &&
+  //         newValue != command) {
+  //       QMessageBox::warning(this, "警告", "该指令值已存在！");
+  //       return;
+  //     }
 
-      // 更新数据库
-      DatabaseWrapper::get()->updateCommand(id, newValue, newRemark);
+  //     // 更新数据库
+  //     DatabaseWrapper::get()->updateCommand(id, newValue, newRemark);
 
-      // 更新表格显示
-      QTableWidgetItem *cmdItem = ui->tableWidget->item(row, 0);
-      cmdItem->setText(newValue);
-      QTableWidgetItem *rmkItem = ui->tableWidget->item(row, 1);
-      rmkItem->setText(newRemark);
-    }
-  } else if (message == "3") {
-    DatabaseWrapper::get()->deleteCommand(id);
-    ui->tableWidget->removeRow(item->row());
-  }
+  //     // 更新表格显示
+  //     QTableWidgetItem *cmdItem = ui->tableWidget->item(row, 0);
+  //     cmdItem->setText(newValue);
+  //     QTableWidgetItem *rmkItem = ui->tableWidget->item(row, 1);
+  //     rmkItem->setText(newRemark);
+  //   }
+  // } else if (message == "3") {
+  //   DatabaseWrapper::get()->deleteCommand(id);
+  //   ui->tableWidget->removeRow(item->row());
+  // }
 }
 
 void MainWindow::onSendCommandButtonClicked() {

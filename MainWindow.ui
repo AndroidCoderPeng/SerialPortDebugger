@@ -33,18 +33,6 @@
       <item row="3" column="2" colspan="3">
        <widget class="QComboBox" name="parityBitBox"/>
       </item>
-      <item row="9" column="0" colspan="5">
-       <widget class="QTableWidget" name="tableWidget">
-        <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
-        </property>
-        <property name="columnCount">
-         <number>2</number>
-        </property>
-        <column/>
-        <column/>
-       </widget>
-      </item>
       <item row="0" column="2" colspan="3">
        <widget class="QComboBox" name="portNameBox"/>
       </item>
@@ -115,6 +103,13 @@
        <widget class="QPushButton" name="clearDataButton">
         <property name="text">
          <string>清空数据</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0" colspan="5">
+       <widget class="QListWidget" name="listWidget">
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
         </property>
        </widget>
       </item>
