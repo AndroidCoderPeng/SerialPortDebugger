@@ -19,12 +19,12 @@
 #include <QTimer>
 
 #include "CommandItemWidget.hpp"
+#include "CommandScriptDialog.hpp"
 #include "DatabaseWrapper.hpp"
+#include "SaveCommandDialog.hpp"
 #include "SerialPortManager.hpp"
 #include "TaskExecutor.hpp"
 #include "Utils.hpp"
-#include "CommandScriptDialog.hpp"
-#include "SaveCommandDialog.hpp"
 
 static void initPortParam(const Ui::MainWindow *ui) {
   // 获取电脑串口
@@ -251,6 +251,21 @@ void MainWindow::onCommandItemClicked(const QListWidgetItem *item) {
   if (!itemWidget) {
     return;
   }
+
+#ifdef Q_OS_LINUX
+  // 取消之前的选中状态
+  if (previousSelectedItemPtr && previousSelectedItemPtr != listItem) {
+    auto *prevWidget = qobject_cast<CommandItemWidget *>(
+        ui->listWidget->itemWidget(previousSelectedItemPtr));
+    if (prevWidget) {
+      prevWidget->setSelected(false);
+    }
+  }
+
+  // 设置当前项为选中状态
+  itemWidget->setSelected(true);
+  previousSelectedItemPtr = listItem;
+#endif
 
   ui->userInputView->setText(itemWidget->command());
 }

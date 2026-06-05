@@ -11,7 +11,7 @@ public:
   explicit CommandItemWidget(const QString &command = QString(),
                              const QString &remark = QString(),
                              QWidget *parent = nullptr);
-
+  void setSelected(bool selected);
   void setCommand(const QString &command);
   void setRemark(const QString &remark);
   void setContent(const QString &command, const QString &remark);
