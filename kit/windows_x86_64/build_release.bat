@@ -4,18 +4,18 @@ setlocal
 echo.
 echo Set variables environment.
 echo.
-set QT_DIR=D:\Dev\Qt5.15\5.15.2\mingw81_64
+set QT_DIR=D:\3rdparty\Qt5.15\5.15.2\mingw81_64
 set QMAKE=%QT_DIR%\bin\qmake.exe
 set WINDEPLOYQT=%QT_DIR%\bin\windeployqt.exe
 set PLUGIN_DIR=%QT_DIR%\plugins
 
-set PROJECT_DIR=D:\Code\QtProjects\serial_port_debugger
+set PROJECT_DIR=D:\Code\QtProjects\SerialPortDebugger
 set BUILD_DIR=%PROJECT_DIR%\build\Desktop_Qt_5_15_2_MinGW_64_bit-Release\release
 set OUTPUT_EXE=SerialPortDebugger.exe
 
 set DESKTOP_DIR=C:\Users\Administrator\Desktop
 set TEMP_DIR=%DESKTOP_DIR%\temp_build
-set INNO_SETUP=E:\Program Files (x86)\Inno Setup 6\ISCC.exe
+set INNO_SETUP=D:\Program Files (x86)\Inno Setup 6\ISCC.exe
 set ISS_SCRIPT=%PROJECT_DIR%\kit\windows_x86_64\SerialPortDebugger.iss
 set ICON_PATH=%PROJECT_DIR%\application.ico
 
@@ -81,7 +81,16 @@ if errorlevel 1 (
 )
 
 echo.
-echo Packaging completed successfully! Installer generated on the desktop. %TEMP_DIR% can delete by user.
+echo Packaging completed successfully! Installer generated on the desktop.
 echo.
+
+echo.
+echo Deleting temporary build directory...
+echo.
+
+REM 切换到桌面目录，释放对 TEMP_DIR 的占用
+cd /d "%DESKTOP_DIR%"
+
+if exist "%TEMP_DIR%" rd /s /q "%TEMP_DIR%"
 
 endlocal
