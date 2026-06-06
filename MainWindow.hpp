@@ -34,10 +34,7 @@ private:
   Ui::MainWindow *ui;
   Logger _logger;
   TaskExecutor *executorPtr = nullptr;
-
-#ifdef Q_OS_LINUX
   QListWidgetItem *previousSelectedItemPtr = nullptr;
-#endif
 
   QList<PortMessage> history;
   QTimer *timerPtr = nullptr;
