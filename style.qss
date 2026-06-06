@@ -91,14 +91,23 @@ QListWidget::item:selected {
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #0070EA,stop:1 #0056CC);
 }
 
-/* 文本输入框 */
-QTextEdit, QLineEdit {
-    background-color: #1e1e1e;
-    color: #d4d4d4;
-    border: 1px solid #555555;
+QPlainTextEdit {
+    border: 1px solid #ABABAB;
+    background-color: white;
 }
 
-/* 复选框 */
+QLineEdit {
+    background-color: white;
+    color: black;
+    border: 1px solid #ABABAB;
+    border-radius: 3px;
+    padding: 3px 7px;
+}
+
+QPlainTextEdit,QLineEdit:hover {
+    border: 1px solid #3DB39E;
+}
+
 QCheckBox {
-    color: #ffffff;
+    color: black;
 }
