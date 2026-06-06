@@ -39,4 +39,7 @@ void DebuggerApplication::initMainWindow() {
 
 DebuggerApplication::~DebuggerApplication() {
   // QThread 子对象会随 Application 销毁自动 quit/wait
+  delete mainWindowPtr;
+  mainWindowPtr = nullptr;
+  _logger.d("DebuggerApplication is being destroyed, cleaning up resources.");
 }

@@ -83,7 +83,7 @@ MainWindow::MainWindow(QMainWindow *parent)
 
   ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
-  QIntValidator *validator = new QIntValidator(1, 99999);
+  QIntValidator *validator = new QIntValidator(1, 99999, this);
   ui->timeLineEdit->setValidator(validator);
 
   // 初始化任务执行器
