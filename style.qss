@@ -3,6 +3,10 @@ QMainWindow {
     background-color: #F5F5F5;
 }
 
+QDialog {
+    background-color: #F5F5F5;
+}
+
 QComboBox {
     background-color: #F5F5F5;
     color: black;
@@ -116,7 +120,7 @@ QLineEdit {
     color: black;
     border: 1px solid #ABABAB;
     border-radius: 3px;
-    padding: 3px 7px;
+    padding: 3px;
 }
 
 QLineEdit:hover {

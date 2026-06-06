@@ -10,7 +10,7 @@
     <height>600</height>
    </rect>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="rootLayout" stretch="1,4">
     <item>
      <layout class="QGridLayout" name="gridLayout">

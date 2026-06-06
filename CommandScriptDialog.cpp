@@ -11,7 +11,7 @@ CommandScriptDialog::CommandScriptDialog(QWidget *parent,
   ui->setupUi(this);
 
   setWindowTitle(QString("指令执行脚本（鼠标左键选择需要执行的指令）"));
-  QIntValidator *validator = new QIntValidator(1, 99999);
+  QIntValidator *validator = new QIntValidator(1, 99999, this);
   ui->timeLineEdit->setValidator(validator);
 
   commandItemModel = new QStandardItemModel(this);

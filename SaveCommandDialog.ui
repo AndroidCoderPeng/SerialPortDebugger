@@ -31,25 +31,25 @@
      <x>31</x>
      <y>24</y>
      <width>341</width>
-     <height>153</height>
+     <height>155</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="spacing">
-     <number>10</number>
+     <number>16</number>
     </property>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,8">
       <property name="spacing">
-       <number>10</number>
+       <number>8</number>
       </property>
       <item>
        <widget class="QLabel" name="label">
-        <property name="minimumSize">
-         <size>
-          <width>64</width>
-          <height>0</height>
-         </size>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="text">
          <string>指令值</string>
@@ -57,7 +57,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPlainTextEdit" name="commandValueView">
+       <widget class="QTextEdit" name="commandValueView">
         <property name="placeholderText">
          <string>请输入16进制格式的指令</string>
         </property>
@@ -72,17 +72,17 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="2,8">
       <property name="spacing">
-       <number>10</number>
+       <number>8</number>
       </property>
       <item>
        <widget class="QLabel" name="label_2">
-        <property name="minimumSize">
-         <size>
-          <width>64</width>
-          <height>0</height>
-         </size>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="text">
          <string>备注</string>
@@ -91,6 +91,12 @@
       </item>
       <item>
        <widget class="QLineEdit" name="remarkValueView">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -107,7 +113,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="spacing">
-       <number>10</number>
+       <number>8</number>
       </property>
       <item>
        <spacer name="horizontalSpacer">
