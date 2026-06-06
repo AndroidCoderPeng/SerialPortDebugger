@@ -126,3 +126,21 @@ QLineEdit:hover {
 QCheckBox {
     color: black;
 }
+
+QCheckBox::indicator {
+    width: 20px;
+    height: 20px;
+    image: url(:/uncheck_hover.png);
+}
+
+QCheckBox::indicator:unchecked:hover {
+    width: 20px;
+    height: 20px;
+    image: url(:/uncheck.png);
+}
+
+QCheckBox::indicator:checked {
+    width: 20px;
+    height: 20px;
+    image: url(:/checked.png);
+}
