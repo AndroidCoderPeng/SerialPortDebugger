@@ -60,6 +60,12 @@ QComboBox QAbstractItemView::item:selected {
     background-color: #3DB39E;
 }
 
+QComboBox:disabled {
+    background-color: #E0E0E0;
+    color: #A0A0A0;
+    border-color: #A0A0A0;
+}
+
 QPushButton {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #007AFF,stop:1 #0060DB);
     color: white;
