@@ -5,7 +5,7 @@ QMainWindow {
 
 QComboBox {
     background-color: #F5F5F5;
-    color: #000000;
+    color: black;
     border: 1px solid #ABABAB;
     padding: 3px 7px;
     border-radius: 3px;
@@ -40,7 +40,7 @@ QComboBox::down-arrow:hover {
 
 /* 下拉列表窗体 */
 QComboBox QAbstractItemView {
-    border: 1px solid #ddd;
+    border: 1px solid #3DB39E;
     background: white;
     selection-color: white;    /* 选中项文字颜色 */
     outline: 0;               /* 移除焦点虚线框 */
@@ -48,7 +48,7 @@ QComboBox QAbstractItemView {
 
 /*下拉列表项*/
 QComboBox QAbstractItemView::item {
-    height: 32px;
+    height: 32px; 
 }
 
 /*下拉列表选中项*/
@@ -56,21 +56,31 @@ QComboBox QAbstractItemView::item:selected {
     background-color: #3DB39E;
 }
 
-/* 按钮样式 */
 QPushButton {
-    background-color: #3c3c3c;
-    color: #ffffff;
-    border: 1px solid #555555;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #007AFF,stop:1 #0060DB);
+    color: white;
+    border: none;
     padding: 5px 10px;
-    border-radius: 3px;
+    border-radius: 4px;
 }
 
 QPushButton:hover {
-    background-color: #4a4a4a;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #0070EA,stop:1 #0056CC); 
 }
 
 QPushButton:pressed {
-    background-color: #2a2a2a;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #0060DB,stop:1 #004AAD);
+}
+
+QPushButton:disabled {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #B0B0B0,stop:1 #9A9A9A);
+    color: #E0E0E0;
+}
+
+QListWidget {
+    background-color: white;
+    color: black;
+    border: 1px solid #ABABAB;
 }
 
 /* 文本输入框 */

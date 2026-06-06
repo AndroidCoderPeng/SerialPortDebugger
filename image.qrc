@@ -6,5 +6,6 @@
     </qresource>
     <qresource prefix="/icon">
         <file>application.ico</file>
+        <file>button_add.ico</file>
     </qresource>
 </RCC>
