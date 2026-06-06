@@ -44,3 +44,6 @@ FORMS += \
 RESOURCES += \
     font.qrc \
     image.qrc
+
+DISTFILES += \
+    README.md

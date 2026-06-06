@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>ic_check.png</file>
-        <file>ic_down_arrow.png</file>
         <file>application.png</file>
     </qresource>
     <qresource prefix="/icon">
