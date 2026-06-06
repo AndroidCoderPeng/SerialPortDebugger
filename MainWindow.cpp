@@ -73,6 +73,13 @@ MainWindow::MainWindow(QMainWindow *parent)
       executorPtr(nullptr) {
   ui->setupUi(this);
 
+  // 清除QComboBox的QAbstractItemView::item默认QSS
+  ui->portNameBox->setView(new QListView());
+  ui->baudRateBox->setView(new QListView());
+  ui->dataBitBox->setView(new QListView());
+  ui->parityBitBox->setView(new QListView());
+  ui->stopBitBox->setView(new QListView());
+
   initPortParam(ui);
 
   DatabaseWrapper::get()->init();

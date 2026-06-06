@@ -17,12 +17,11 @@ DebuggerApplication::DebuggerApplication(int &argc, char **argv)
     _logger.w("Failed to load font.");
   }
 
-  QFile styleFile(":/style/style.qss");
+  QFile styleFile(":/style.qss");
   if (styleFile.open(QFile::ReadOnly | QFile::Text)) {
     QString style = QString::fromUtf8(styleFile.readAll());
     setStyleSheet(style);
     styleFile.close();
-    _logger.d("StyleSheet loaded successfully.");
   } else {
     _logger.w("Failed to load style.");
   }
