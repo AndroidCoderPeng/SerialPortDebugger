@@ -345,7 +345,7 @@ void MainWindow::onCustomAction(const QListWidgetItem *item,
 
 void MainWindow::onSendCommandButtonClicked() {
   // 获取纯文字内容
-  const auto command = ui->userInputView->text();
+  const auto command = ui->userInputView->toPlainText();
   sendCommand(command);
 }
 
@@ -451,7 +451,7 @@ void MainWindow::onTimeCheckBoxStateChanged(const qint16 &state) {
     if (!timerPtr) {
       timerPtr = new QTimer(this);
       connect(timerPtr, &QTimer::timeout, this, [this] {
-        const auto command = ui->userInputView->text();
+        const auto command = ui->userInputView->toPlainText();
         sendCommand(command);
       });
     }

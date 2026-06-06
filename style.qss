@@ -96,6 +96,21 @@ QPlainTextEdit {
     background-color: white;
 }
 
+QPlainTextEdit:hover {
+    border: 1px solid #3DB39E;
+}
+
+QTextEdit {
+    background-color: white;
+    color: black;
+    border: 1px solid #ABABAB;
+    border-radius: 3px;
+}
+
+QTextEdit:hover {
+    border: 1px solid #3DB39E;
+}
+
 QLineEdit {
     background-color: white;
     color: black;
@@ -104,7 +119,7 @@ QLineEdit {
     padding: 3px 7px;
 }
 
-QPlainTextEdit,QLineEdit:hover {
+QLineEdit:hover {
     border: 1px solid #3DB39E;
 }
 
