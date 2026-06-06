@@ -1,6 +1,6 @@
 #include "DebuggerApplication.hpp"
-#include "SerialPortObserver.hpp"
 
+#include <QFile>
 #include <QFontDatabase>
 #include <QScreen>
 
@@ -15,6 +15,16 @@ DebuggerApplication::DebuggerApplication(int &argc, char **argv)
     setFont(font);
   } else {
     _logger.w("Failed to load font.");
+  }
+
+  QFile styleFile(":/style/style.qss");
+  if (styleFile.open(QFile::ReadOnly | QFile::Text)) {
+    QString style = QString::fromUtf8(styleFile.readAll());
+    setStyleSheet(style);
+    styleFile.close();
+    _logger.d("StyleSheet loaded successfully.");
+  } else {
+    _logger.w("Failed to load style.");
   }
 
   initMainWindow();
