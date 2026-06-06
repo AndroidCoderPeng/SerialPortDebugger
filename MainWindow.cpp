@@ -215,7 +215,7 @@ void MainWindow::onSaveDataButtonClicked() {
   file.close();
 }
 
-void MainWindow::onClearDataButtonClicked() { ui->comMessageView->clear(); }
+void MainWindow::onClearDataButtonClicked() { ui->messageView->clear(); }
 
 void MainWindow::onAddCommandButtonClicked() {
   SaveCommandDialog dialog(this);
@@ -383,7 +383,7 @@ void MainWindow::updateComMessageLog(const QByteArray &data,
     dataStr = QString(data);
   }
 
-  QTextCursor cursor(ui->comMessageView->document());
+  QTextCursor cursor(ui->messageView->document());
   cursor.movePosition(QTextCursor::End);
   if (msg.direction == "收") {
     QTextCharFormat format;
@@ -395,8 +395,8 @@ void MainWindow::updateComMessageLog(const QByteArray &data,
   cursor.insertText(
       QString("[%1]【%2】%3\n").arg(msg.formattedTime, msg.direction, dataStr));
 
-  ui->comMessageView->setTextCursor(cursor);
-  ui->comMessageView->ensureCursorVisible(); // 自动滚到底部
+  ui->messageView->setTextCursor(cursor);
+  ui->messageView->ensureCursorVisible(); // 自动滚到底部
 }
 
 void MainWindow::onScriptButtonClicked() {
@@ -472,14 +472,14 @@ void MainWindow::uncheckTimeCheckBox() {
 }
 
 void MainWindow::onEncodeCheckBoxStateChanged(const qint16 &state) {
-  ui->comMessageView->clear(); // 清空当前显示
+  ui->messageView->clear(); // 清空当前显示
   const QList<PortMessage> &listRef = history;
   if (state == Qt::Checked) {
     for (const auto &msg : listRef) {
       // 十六进制格式数据
       const QString hexData = Utils::formatByteArray(msg.data);
 
-      QTextCursor cursor(ui->comMessageView->document());
+      QTextCursor cursor(ui->messageView->document());
       cursor.movePosition(QTextCursor::End);
 
       if (msg.direction == "收") {
@@ -496,7 +496,7 @@ void MainWindow::onEncodeCheckBoxStateChanged(const qint16 &state) {
     for (const auto &msg : listRef) {
       const QString decodedData = QString(msg.data);
 
-      QTextCursor cursor(ui->comMessageView->document());
+      QTextCursor cursor(ui->messageView->document());
       cursor.movePosition(QTextCursor::End);
 
       if (msg.direction == "收") {
@@ -512,7 +512,7 @@ void MainWindow::onEncodeCheckBoxStateChanged(const qint16 &state) {
     }
   }
 
-  ui->comMessageView->ensureCursorVisible(); // 自动滚到底部
+  ui->messageView->ensureCursorVisible(); // 自动滚到底部
 }
 
 void MainWindow::executeTask(const QString &command) { sendCommand(command); }
