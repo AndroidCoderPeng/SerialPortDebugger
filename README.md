@@ -7,12 +7,13 @@
 
 ## 支持的平台
 
-| 平台              | 架构            | 截图                                            |
-|-----------------|---------------|-----------------------------------------------|
-| Windows 7       | 64位           | ![windows_7.png](screenshots/windows_7.png)   |
-| Windows 10 / 11 | 64位           | ![windows_10.png](screenshots/windows_10.png) |
-| Linux           | AMD 64位       | ![linux_amd.png](screenshots/linux_amd.png)   |
-| Linux           | ARM 64位（树莓派等） | ![linux_arm.png](screenshots/linux_arm.png)   |
+| 平台         | 架构            | 截图                                            |
+|------------|---------------|-----------------------------------------------|
+| Windows 7  | 64位           | ![windows_7.png](screenshots/windows_7.png)   |
+| Windows 10 | 64位           | ![windows_10.png](screenshots/windows_10.png) |
+| Windows 11 | 64位           | ![windows_11.png](screenshots/windows_11.png) |
+| Linux      | AMD 64位       | ![linux_amd.png](screenshots/linux_amd.png)   |
+| Linux      | ARM 64位（树莓派等） | ![linux_arm.png](screenshots/linux_arm.png)   |
 
 ## 功能特性
 
