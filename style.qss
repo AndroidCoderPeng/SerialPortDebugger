@@ -52,7 +52,7 @@ QComboBox QAbstractItemView {
 
 /*下拉列表项*/
 QComboBox QAbstractItemView::item {
-    height: 32px; 
+    height: 24px; 
 }
 
 /*下拉列表选中项*/
