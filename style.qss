@@ -112,6 +112,20 @@ QListWidget::item:selected {
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #0070EA,stop:1 #0056CC);
 }
 
+/* 横向可拖动item的QListWidget */
+QListWidget#horizontalListWidget {
+    padding: 5px 4px;
+    font-size: 16px;
+    outline: none;
+}
+
+QListWidget#horizontalListWidget::item {
+    margin-right: 8px;
+    padding: 0px 8px;
+    border: none;
+    border-radius: 4px;
+}
+
 QPlainTextEdit {
     border: 1px solid #ABABAB;
     background-color: white;

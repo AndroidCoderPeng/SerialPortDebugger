@@ -41,7 +41,7 @@ CommandScriptDialog::CommandScriptDialog(QWidget *parent,
 
 void CommandScriptDialog::onCommandSelectionChanged(
     const QItemSelection &selected, const QItemSelection &deselected) {
-  ui->listWidget->clear();
+  ui->horizontalListWidget->clear();
   QModelIndexList indexes = ui->listView->selectionModel()->selectedIndexes();
   const QModelIndexList &indexRef = indexes;
   for (const QModelIndex &index : indexRef) {
@@ -52,12 +52,12 @@ void CommandScriptDialog::onCommandSelectionChanged(
     QListWidgetItem *item = new QListWidgetItem(remarkStr);
     // 缓存数据
     item->setData(Qt::UserRole, commandStr);
-    ui->listWidget->addItem(item);
+    ui->horizontalListWidget->addItem(item);
   }
 }
 
 void CommandScriptDialog::onConfirmButtonClicked() {
-  if (ui->listWidget->count() == 0) {
+  if (ui->horizontalListWidget->count() == 0) {
     QMessageBox::warning(this, "警告", "未选择任何指令");
     return;
   }
@@ -74,8 +74,8 @@ void CommandScriptDialog::onConfirmButtonClicked() {
 QList<ScriptConfig> CommandScriptDialog::getScriptConfigs() const {
   // 获取listWidget里面的数据
   QList<ScriptConfig> configs;
-  for (int i = 0; i < ui->listWidget->count(); ++i) {
-    QListWidgetItem *item = ui->listWidget->item(i);
+  for (int i = 0; i < ui->horizontalListWidget->count(); ++i) {
+    QListWidgetItem *item = ui->horizontalListWidget->item(i);
     QString remark = item->text();                         // 备注
     QString command = item->data(Qt::UserRole).toString(); // 对应的指令值
 
