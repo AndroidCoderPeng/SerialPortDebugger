@@ -123,6 +123,26 @@ MainWindow::MainWindow(QMainWindow *parent)
           &MainWindow::onTimeCheckBoxStateChanged);
   connect(ui->hexReceiveCheckBox, &QCheckBox::stateChanged, this,
           &MainWindow::onEncodeCheckBoxStateChanged);
+
+  // ========== 一次性连接 SerialPortManager 的所有信号 ==========
+  SerialPortManager *mgr = SerialPortManager::get();
+  connect(mgr, &SerialPortManager::dataReceivedSignal, this,
+          [this](const QByteArray &data) { updatePortMessageLog(data, "收"); });
+  connect(mgr, &SerialPortManager::stateChangedSignal, this,
+          [this](bool opened) {
+            ui->openPortButton->setText(opened ? "关闭串口" : "打开串口");
+            updateComboxState(opened);
+            if (!opened) {
+              uncheckTimeCheckBox();
+              if (timerPtr && timerPtr->isActive()) {
+                timerPtr->stop();
+              }
+            }
+          });
+  connect(mgr, &SerialPortManager::errorOccurredSignal, this,
+          [this](const QString &msg) {
+            QMessageBox::critical(this, "串口错误", msg);
+          });
 }
 
 void MainWindow::updateComboxState(const bool disabled) const {
@@ -138,8 +158,9 @@ void MainWindow::updateComboxState(const bool disabled) const {
 }
 
 void MainWindow::onOpenPortButtonClicked() {
-  if (SerialPortManager::get()->isOpen()) {
-    SerialPortManager::get()->close();
+  SerialPortManager *mgr = SerialPortManager::get();
+  if (mgr->isOpen()) {
+    mgr->close();
     ui->openPortButton->setText("打开串口");
     updateComboxState(false);
     uncheckTimeCheckBox();
@@ -153,37 +174,31 @@ void MainWindow::onOpenPortButtonClicked() {
     const QString dataBits = ui->dataBitBox->currentText();
     const QString parity = ui->parityBitBox->currentText();
     const QString stopBits = ui->stopBitBox->currentText();
-    const QString flowControl = "None"; // 默认无流控
 
     if (!ok) {
       QMessageBox::warning(this, "错误", "波特率转换失败");
       return;
     }
 
-    const auto ret = SerialPortManager::get()->open(
-        portName, baudRate, dataBits, parity, stopBits, flowControl);
-    if (ret) {
-      ui->openPortButton->setText("关闭串口");
-      updateComboxState(true);
-    } else {
+    // 默认无流控
+    const auto ret =
+        mgr->open(portName, baudRate, dataBits, parity, stopBits, "None");
+    if (!ret) {
       QMessageBox::critical(this, "错误", "打开失败，请检查参数设置和串口连接");
     }
   }
 }
 
-void MainWindow::slotDataReceived(const QByteArray &data) {
-  updateComMessageLog(data, "收");
-}
-
 void MainWindow::onRefreshButtonClicked() {
   ui->portNameBox->clear();
   const auto &ports = QSerialPortInfo::availablePorts();
-  for (const QSerialPortInfo &port : ports) {
-    ui->portNameBox->addItem(port.portName());
+  if (ports.isEmpty()) {
+    ui->portNameBox->addItem("No port available");
+    return;
   }
 
-  if (ui->portNameBox->count() == 0) {
-    ui->portNameBox->addItem("No serial ports available");
+  for (const QSerialPortInfo &port : ports) {
+    ui->portNameBox->addItem(port.portName());
   }
 }
 
@@ -363,16 +378,16 @@ void MainWindow::sendCommand(const QString &command) {
     }
     const QByteArray data = Utils::formatHexString(command);
     SerialPortManager::get()->write(data);
-    updateComMessageLog(data, "发");
+    updatePortMessageLog(data, "发");
   } else {
     const QByteArray data = command.toUtf8();
     SerialPortManager::get()->write(data);
-    updateComMessageLog(data, "发");
+    updatePortMessageLog(data, "发");
   }
 }
 
-void MainWindow::updateComMessageLog(const QByteArray &data,
-                                     const QString &direction) {
+void MainWindow::updatePortMessageLog(const QByteArray &data,
+                                      const QString &direction) {
   const PortMessage msg(data, direction, QDateTime::currentMSecsSinceEpoch());
   history.append(msg);
 
@@ -412,7 +427,6 @@ void MainWindow::onScriptButtonClicked() {
   }
 
   const auto commands = DatabaseWrapper::get()->getAllCommands();
-
   if (commands.count() <= 1) {
     QMessageBox::information(this, "提示", "指令数量至少大于2");
     return;

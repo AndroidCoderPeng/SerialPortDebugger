@@ -27,10 +27,21 @@ public:
   void close();
   bool isOpen() const;
 
+  // 不能让 UI 层跳过 Manager 直接连 Worker。
+  // 正确的做法是 Manager 暴露自己的信号，在 slot 里 re-emit。
+  // 虽然看起来像是"把 Worker 的信号再写一遍"，但这是合理的外观模式，只为换取：
+  //    1.UI 层不知道 Worker 的存在（解耦）
+  //    2.Manager 可以在转发前做额外处理（日志、过滤、缓冲）
+  //    3.未来换掉 Worker 实现时，UI 完全不受影响
 signals:
-  void signalDataReceived(const QByteArray &data);
-  void signalPortStateChanged(bool opened);
-  void signalError(const QString &message);
+  void dataReceivedSignal(const QByteArray &data);
+  void stateChangedSignal(bool opened);
+  void errorOccurredSignal(const QString &message);
+
+private slots:
+  void dataReceivedSlot(const QByteArray &data);
+  void stateChangedSlot(bool opened);
+  void errorOccurredSlot(const QString &message);
 
 private:
   QThread *ioThreadPtr;

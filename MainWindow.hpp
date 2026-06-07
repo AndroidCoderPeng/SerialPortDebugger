@@ -27,9 +27,6 @@ public:
 
   ~MainWindow() override;
 
-public slots:
-  void slotDataReceived(const QByteArray &data);
-
 private:
   Ui::MainWindow *ui;
   Logger _logger;
@@ -64,7 +61,7 @@ private:
 
   void sendCommand(const QString &command);
 
-  void updateComMessageLog(const QByteArray &data, const QString &direction);
+  void updatePortMessageLog(const QByteArray &data, const QString &direction);
 
   void onScriptButtonClicked();
 

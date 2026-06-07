@@ -46,10 +46,9 @@ public slots:
 
   bool openPort(const QString &portName, qint32 baudRate,
                 const QString &dataBits, const QString &parity,
-                const QString &stopBits, const QString &flowControl,
-                QString &errorText) {
+                const QString &stopBits, const QString &flowControl) {
     if (!portPtr) {
-      errorText = "SerialPortWorker is not initialized";
+      emit errorOccurred("SerialPortWorker is not initialized");
       return false;
     }
 
@@ -94,9 +93,9 @@ public slots:
 
     const bool ok = portPtr->open(QIODevice::ReadWrite);
     if (!ok) {
-      errorText = portPtr->errorString();
+      emit errorOccurred(portPtr->errorString());
     }
-    emit portStateChanged(ok);
+    emit stateChanged(ok);
     return ok;
   }
 
@@ -125,14 +124,14 @@ public slots:
     if (portPtr && portPtr->isOpen()) {
       portPtr->close();
     }
-    emit portStateChanged(false);
+    emit stateChanged(false);
   }
 
   bool isPortOpen() const { return portPtr && portPtr->isOpen(); }
 
 signals:
   void dataReceived(const QByteArray &data);
-  void portStateChanged(bool opened);
+  void stateChanged(bool opened);
   void errorOccurred(const QString &message);
 
 private:
@@ -146,11 +145,11 @@ SerialPortManager::SerialPortManager(QObject *parent)
 
   connect(ioThreadPtr, &QThread::finished, workerPtr, &QObject::deleteLater);
   connect(workerPtr, &SerialPortWorker::dataReceived, this,
-          &SerialPortManager::signalDataReceived);
-  connect(workerPtr, &SerialPortWorker::portStateChanged, this,
-          &SerialPortManager::signalPortStateChanged);
+          &SerialPortManager::dataReceivedSlot);
+  connect(workerPtr, &SerialPortWorker::stateChanged, this,
+          &SerialPortManager::stateChangedSlot);
   connect(workerPtr, &SerialPortWorker::errorOccurred, this,
-          &SerialPortManager::signalError);
+          &SerialPortManager::errorOccurredSlot);
 
   ioThreadPtr->start();
 
@@ -163,20 +162,13 @@ bool SerialPortManager::open(const QString &portName, qint32 baudRate,
                              const QString &stopBits,
                              const QString &flowControl) {
   bool ok = false;
-  QString errorText;
-
   QMetaObject::invokeMethod(
       workerPtr,
       [&]() {
         ok = workerPtr->openPort(portName, baudRate, dataBits, parity, stopBits,
-                                 flowControl, errorText);
+                                 flowControl);
       },
       Qt::BlockingQueuedConnection);
-
-  if (!ok && !errorText.isEmpty()) {
-    emit signalError(errorText);
-  }
-
   return ok;
 }
 
@@ -205,6 +197,18 @@ SerialPortManager::~SerialPortManager() {
     ioThreadPtr->quit();
     ioThreadPtr->wait();
   }
+}
+
+void SerialPortManager::dataReceivedSlot(const QByteArray &data) {
+  emit dataReceivedSignal(data);
+}
+
+void SerialPortManager::stateChangedSlot(bool opened) {
+  emit stateChangedSignal(opened);
+}
+
+void SerialPortManager::errorOccurredSlot(const QString &message) {
+  emit errorOccurredSignal(message);
 }
 
 // 内部 Worker 类写在 .cpp，就需要这一行代码。
