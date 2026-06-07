@@ -22,7 +22,7 @@ SaveCommandDialog::SaveCommandDialog(QWidget *parent,
     setWindowTitle(QString("编辑扩展指令"));
   }
 
-  connect(ui->saveCommandButton, &QPushButton::clicked, this,
+  connect(ui->saveButton, &QPushButton::clicked, this,
           &SaveCommandDialog::onSaveCommandButtonClicked);
   connect(ui->cancelButton, &QPushButton::clicked, this,
           &SaveCommandDialog::onCancelButtonClicked);

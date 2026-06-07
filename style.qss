@@ -87,6 +87,17 @@ QPushButton:disabled {
     color: #E0E0E0;
 }
 
+/* 取消功能按钮 */
+QPushButton#cancelButton {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FFFFFF, stop:1 #F2F2F2);
+    color: black;
+    border: 1px solid #A0A0A0;
+}
+
+QPushButton#cancelButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FAFAFA, stop:1 #E8E8ED);
+}
+
 QListWidget {
     background-color: white;
     color: black;
