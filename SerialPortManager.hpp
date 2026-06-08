@@ -19,7 +19,7 @@ public:
     return &instance;
   }
 
-  bool open(const QString &portName, qint32 baudRate,
+  void open(const QString &portName, qint32 baudRate,
             const QString &dataBits = "", const QString &parity = "",
             const QString &stopBits = "", const QString &flowControl = "");
 

@@ -44,12 +44,12 @@ public slots:
             });
   }
 
-  bool openPort(const QString &portName, qint32 baudRate,
+  void openPort(const QString &portName, qint32 baudRate,
                 const QString &dataBits, const QString &parity,
                 const QString &stopBits, const QString &flowControl) {
     if (!portPtr) {
       emit errorOccurred("SerialPortWorker is not initialized");
-      return false;
+      return;
     }
 
     if (portPtr->isOpen()) {
@@ -91,9 +91,7 @@ public slots:
       portPtr->setFlowControl(QSerialPort::NoFlowControl);
     }
 
-    const bool ok = portPtr->open(QIODevice::ReadWrite);
-    emit stateChanged(ok);
-    return ok;
+    emit stateChanged(portPtr->open(QIODevice::ReadWrite));
   }
 
   void writeData(const QByteArray &data) {
@@ -154,24 +152,23 @@ SerialPortManager::SerialPortManager(QObject *parent)
   QMetaObject::invokeMethod(workerPtr, "init", Qt::BlockingQueuedConnection);
 }
 
-bool SerialPortManager::open(const QString &portName, qint32 baudRate,
+void SerialPortManager::open(const QString &portName, qint32 baudRate,
                              const QString &dataBits, const QString &parity,
                              const QString &stopBits,
                              const QString &flowControl) {
-  bool ok = false;
-  QMetaObject::invokeMethod(
-      workerPtr,
-      [&]() {
-        ok = workerPtr->openPort(portName, baudRate, dataBits, parity, stopBits,
-                                 flowControl);
-      },
-      Qt::BlockingQueuedConnection);
-  return ok;
+  // [=]等效[this, portName, baudRate, dataBits, parity, stopBits, flowControl]
+  // 参数少用后者的写法更推荐，参数多用前者
+  // 现代 C++ 更推荐后者
+  auto function = [=]() {
+    workerPtr->openPort(portName, baudRate, dataBits, parity, stopBits,
+                        flowControl);
+  };
+  QMetaObject::invokeMethod(workerPtr, function, Qt::BlockingQueuedConnection);
 }
 
 void SerialPortManager::write(const QByteArray &data) {
-  QMetaObject::invokeMethod(
-      workerPtr, [=]() { workerPtr->writeData(data); }, Qt::QueuedConnection);
+  auto function = [=]() { workerPtr->writeData(data); };
+  QMetaObject::invokeMethod(workerPtr, function, Qt::QueuedConnection);
 }
 
 void SerialPortManager::close() {
@@ -181,9 +178,9 @@ void SerialPortManager::close() {
 
 bool SerialPortManager::isOpen() const {
   bool opened = false;
-  QMetaObject::invokeMethod(
-      workerPtr, [&]() { opened = workerPtr->isPortOpen(); },
-      Qt::BlockingQueuedConnection);
+  // [&]等效[this, &opened]，适合修改外部变量场景
+  auto function = [&]() { opened = workerPtr->isPortOpen(); };
+  QMetaObject::invokeMethod(workerPtr, function, Qt::BlockingQueuedConnection);
   return opened;
 }
 

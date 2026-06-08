@@ -141,7 +141,6 @@ MainWindow::MainWindow(QMainWindow *parent)
           });
   connect(mgr, &SerialPortManager::errorOccurredSignal, this,
           [this](const QString &msg) {
-            qDebug() << msg;
             QMessageBox::critical(this, "串口错误", msg);
           });
 }
@@ -182,13 +181,7 @@ void MainWindow::onOpenPortButtonClicked() {
     }
 
     // 默认无流控
-    const auto ret =
-        mgr->open(portName, baudRate, dataBits, parity, stopBits, "None");
-    if (!ret) {
-      // 错误信息通过 SerialPortManager 的 errorOccurredSignal
-      // 信号传递，不需要在这里显示
-      _logger.e("打开失败，请检查参数设置和串口连接");
-    }
+    mgr->open(portName, baudRate, dataBits, parity, stopBits, "None");
   }
 }
 
