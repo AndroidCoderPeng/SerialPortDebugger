@@ -92,9 +92,6 @@ public slots:
     }
 
     const bool ok = portPtr->open(QIODevice::ReadWrite);
-    if (!ok) {
-      emit errorOccurred(portPtr->errorString());
-    }
     emit stateChanged(ok);
     return ok;
   }
