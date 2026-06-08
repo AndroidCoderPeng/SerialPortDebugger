@@ -7,37 +7,81 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>600</height>
+    <height>675</height>
    </rect>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="rootLayout" stretch="1,4">
+   <layout class="QHBoxLayout" name="rootLayout" stretch="0,1">
+    <property name="spacing">
+     <number>8</number>
+    </property>
+    <property name="leftMargin">
+     <number>8</number>
+    </property>
+    <property name="topMargin">
+     <number>8</number>
+    </property>
+    <property name="rightMargin">
+     <number>8</number>
+    </property>
+    <property name="bottomMargin">
+     <number>8</number>
+    </property>
     <item>
      <layout class="QGridLayout" name="gridLayout">
       <property name="spacing">
        <number>8</number>
       </property>
+      <item row="4" column="0" colspan="2">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>停止位</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2" colspan="3">
+       <widget class="QComboBox" name="stopBitBox"/>
+      </item>
+      <item row="0" column="2" colspan="3">
+       <widget class="QComboBox" name="portNameBox"/>
+      </item>
+      <item row="5" column="0" colspan="2">
+       <widget class="QPushButton" name="refreshButton">
+        <property name="text">
+         <string>刷新串口</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="2" colspan="3">
+       <widget class="QPushButton" name="clearDataButton">
+        <property name="text">
+         <string>清空数据</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0" colspan="4">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>扩展指令</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2" colspan="3">
+       <widget class="QComboBox" name="parityBitBox"/>
+      </item>
+      <item row="7" column="0" colspan="2">
+       <widget class="QPushButton" name="saveDataButton">
+        <property name="text">
+         <string>保存数据</string>
+        </property>
+       </widget>
+      </item>
       <item row="5" column="2" colspan="3">
        <widget class="QPushButton" name="openPortButton">
         <property name="text">
          <string>打开串口</string>
         </property>
        </widget>
-      </item>
-      <item row="2" column="2" colspan="3">
-       <widget class="QComboBox" name="dataBitBox"/>
-      </item>
-      <item row="1" column="2" colspan="3">
-       <widget class="QComboBox" name="baudRateBox"/>
-      </item>
-      <item row="4" column="2" colspan="3">
-       <widget class="QComboBox" name="stopBitBox"/>
-      </item>
-      <item row="3" column="2" colspan="3">
-       <widget class="QComboBox" name="parityBitBox"/>
-      </item>
-      <item row="0" column="2" colspan="3">
-       <widget class="QComboBox" name="portNameBox"/>
       </item>
       <item row="8" column="4">
        <widget class="QPushButton" name="addCommandButton">
@@ -62,38 +106,10 @@
         </property>
        </widget>
       </item>
-      <item row="8" column="0" colspan="4">
-       <widget class="QLabel" name="label_7">
-        <property name="text">
-         <string>扩展指令</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>波特率</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>数据位</string>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="0" colspan="2">
        <widget class="QLabel" name="label_4">
         <property name="text">
          <string>校验位</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0" colspan="2">
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>停止位</string>
         </property>
        </widget>
       </item>
@@ -104,24 +120,10 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="0" colspan="2">
-       <widget class="QPushButton" name="refreshButton">
+      <item row="2" column="0" colspan="2">
+       <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>刷新串口</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="0" colspan="2">
-       <widget class="QPushButton" name="saveDataButton">
-        <property name="text">
-         <string>保存数据</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="2" colspan="3">
-       <widget class="QPushButton" name="clearDataButton">
-        <property name="text">
-         <string>清空数据</string>
+         <string>数据位</string>
         </property>
        </widget>
       </item>
@@ -132,10 +134,23 @@
         </property>
        </widget>
       </item>
+      <item row="2" column="2" colspan="3">
+       <widget class="QComboBox" name="dataBitBox"/>
+      </item>
+      <item row="1" column="2" colspan="3">
+       <widget class="QComboBox" name="baudRateBox"/>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>波特率</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout" stretch="8,1,0">
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="9,0,1">
       <property name="spacing">
        <number>8</number>
       </property>
@@ -145,50 +160,6 @@
          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
         </property>
        </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="spacing">
-         <number>8</number>
-        </property>
-        <item>
-         <widget class="QTextEdit" name="userInputView">
-          <property name="clearButtonEnabled" stdset="0">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <property name="spacing">
-           <number>8</number>
-          </property>
-          <item>
-           <widget class="QPushButton" name="sendDataButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>发送</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="hexSendCheckBox">
-            <property name="text">
-             <string>16进制</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -201,19 +172,6 @@
            <string>指令脚本</string>
           </property>
          </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
         </item>
         <item>
          <widget class="QCheckBox" name="hexReceiveCheckBox">
@@ -241,7 +199,7 @@
         <item>
          <widget class="QCheckBox" name="timeCheckBox">
           <property name="text">
-           <string>定时发送</string>
+           <string>循环发送</string>
           </property>
          </widget>
         </item>
@@ -284,6 +242,50 @@
            <string>ms</string>
           </property>
          </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>8</number>
+        </property>
+        <item>
+         <widget class="QTextEdit" name="userInputView">
+          <property name="clearButtonEnabled" stdset="0">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="spacing">
+           <number>8</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="sendDataButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>发送</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="hexSendCheckBox">
+            <property name="text">
+             <string>16进制</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
