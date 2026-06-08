@@ -1,201 +1,207 @@
 /* 全局背景色 */
 QMainWindow {
-    background-color: #F5F5F5;
+        background-color: #F5F5F5;
 }
 
 QDialog {
-    background-color: #F5F5F5;
+        background-color: #F5F5F5;
 }
 
 QComboBox {
-    background-color: #F5F5F5;
-    color: black;
-    border: 1px solid #ABABAB;
-    padding: 3px 7px;
-    border-radius: 3px;
+        background-color: #F5F5F5;
+        color: black;
+        border: 1px solid #ABABAB;
+        padding: 3px 7px;
+        border-radius: 3px;
 }
 
 QComboBox::drop-down {
-    subcontrol-origin: padding; /* drop-down 按钮会被放置在 comboBox 的 border 以内 */
-    subcontrol-position: top right; /* 在确定了 padding 原点后，这条属性将 drop-down 按钮贴靠在父控件右上角。*/
-    width: 30px;              /* 下拉按钮宽度 */
-    border-left: 1px solid #ABABAB; /* 左侧分隔线 */
+        /* drop-down 按钮会被放置在 comboBox 的 border 以内 */
+        subcontrol-origin: padding;
+        /* 在确定了 padding 原点后，这条属性将 drop-down 按钮贴靠在父控件右上角。*/
+        subcontrol-position: top right;
+        /* 下拉按钮宽度 */
+        width: 30px;
+        /* 左侧分隔线 */
+        border-left: 1px solid #ABABAB;
 }
 
- /* 下拉箭头图标 */
+/* 下拉箭头图标 */
 QComboBox::down-arrow {
-    image: url(:/down_arrow.png);
-    width: 16px;
-    height: 16px;
+        image: url(:/down_arrow.png);
+        width: 16px;
+        height: 16px;
 }
 
 /* 鼠标悬停时边框色 */
 QComboBox:hover {
-    border-color: #3DB39E;
+        border-color: #3DB39E;
 }
 
 QComboBox::drop-down:hover {
-    border-color: #3DB39E;
+        border-color: #3DB39E;
 }
 
 QComboBox::down-arrow:hover {
-    image: url(:/down_arrow_3db39e.png);
+        image: url(:/down_arrow_3db39e.png);
 }
 
 /* 下拉列表窗体 */
 QComboBox QAbstractItemView {
-    border: 1px solid #3DB39E;
-    background: white;
-    selection-color: white;    /* 选中项文字颜色 */
-    outline: 0;               /* 移除焦点虚线框 */
+        border: 1px solid #3DB39E;
+        background: white;
+        /* 选中项文字颜色 */
+        selection-color: white;
+        /* 移除焦点虚线框 */
+        outline: 0;
 }
 
 /*下拉列表项*/
 QComboBox QAbstractItemView::item {
-    height: 24px; 
+        height: 24px;
 }
 
 /*下拉列表选中项*/
 QComboBox QAbstractItemView::item:selected {
-    background-color: #3DB39E;
+        background-color: #3DB39E;
 }
 
 QComboBox:disabled {
-    background-color: #E0E0E0;
-    color: #A0A0A0;
-    border-color: #A0A0A0;
+        background-color: #E0E0E0;
+        color: #A0A0A0;
+        border-color: #A0A0A0;
 }
 
 QPushButton {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #007AFF,stop:1 #0060DB);
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
+        background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #007AFF, stop:1 #0060DB);
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
 }
 
 QPushButton:hover {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #0070EA,stop:1 #0056CC); 
+        background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0070EA, stop:1 #0056CC);
 }
 
 QPushButton:pressed {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #0060DB,stop:1 #004AAD);
+        background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0060DB, stop:1 #004AAD);
 }
 
 QPushButton:disabled {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #B0B0B0,stop:1 #9A9A9A);
-    color: #E0E0E0;
+        background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B0B0B0, stop:1 #9A9A9A);
+        color: #E0E0E0;
 }
 
 /* 取消功能按钮 */
 QPushButton#cancelButton {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FFFFFF, stop:1 #F2F2F2);
-    color: black;
-    border: 1px solid #A0A0A0;
+        background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:1 #F2F2F2);
+        color: black;
+        border: 1px solid #A0A0A0;
 }
 
 QPushButton#cancelButton:hover {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FAFAFA, stop:1 #E8E8ED);
+        background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FAFAFA, stop:1 #E8E8ED);
 }
 
 QListWidget {
-    background-color: white;
-    color: black;
-    border: 1px solid #ABABAB;
+        background-color: white;
+        color: black;
+        border: 1px solid #ABABAB;
 }
 
 QListWidget::item:hover {
-    background-color: rgba(0, 113, 234, 0.1);
+        background-color: rgba(0, 113, 234, 0.1);
 }
 
 QListWidget::item:selected {
-    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #0070EA,stop:1 #0056CC);
+        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0070EA, stop:1 #0056CC);
 }
 
 /* 横向可拖动item的QListWidget */
 QListWidget#horizontalListWidget {
-    padding: 5px 4px;
-    font-size: 16px;
-    outline: none;
+        padding: 5px 4px;
+        font-size: 16px;
+        outline: none;
 }
 
 QListWidget#horizontalListWidget::item {
-    margin-right: 8px;
-    padding: 0px 8px;
-    border: none;
-    border-radius: 4px;
+        margin-right: 8px;
+        padding: 0px 8px;
+        border: none;
+        border-radius: 4px;
 }
 
 QPlainTextEdit {
-    border: 1px solid #ABABAB;
-    background-color: white;
+        border: 1px solid #ABABAB;
+        background-color: white;
 }
 
 QPlainTextEdit:hover {
-    border: 1px solid #3DB39E;
+        border: 1px solid #3DB39E;
 }
 
 QTextEdit {
-    background-color: white;
-    color: black;
-    border: 1px solid #ABABAB;
-    border-radius: 3px;
+        background-color: white;
+        color: black;
+        border: 1px solid #ABABAB;
+        border-radius: 3px;
 }
 
 QTextEdit:hover {
-    border: 1px solid #3DB39E;
+        border: 1px solid #3DB39E;
 }
 
 QLineEdit {
-    background-color: white;
-    color: black;
-    border: 1px solid #ABABAB;
-    border-radius: 3px;
-    padding: 3px;
+        background-color: white;
+        color: black;
+        border: 1px solid #ABABAB;
+        border-radius: 3px;
+        padding: 3px;
 }
 
 QLineEdit:hover {
-    border: 1px solid #3DB39E;
+        border: 1px solid #3DB39E;
 }
 
 QCheckBox {
-    color: black;
+        color: black;
 }
 
 QCheckBox::indicator {
-    width: 20px;
-    height: 20px;
-    image: url(:/uncheck_hover.png);
+        width: 20px;
+        height: 20px;
+        image: url(:/uncheck_hover.png);
 }
 
 QCheckBox::indicator:unchecked:hover {
-    width: 20px;
-    height: 20px;
-    image: url(:/uncheck.png);
+        width: 20px;
+        height: 20px;
+        image: url(:/uncheck.png);
 }
 
 QCheckBox::indicator:checked {
-    width: 20px;
-    height: 20px;
-    image: url(:/checked.png);
+        width: 20px;
+        height: 20px;
+        image: url(:/checked.png);
 }
 
 QListView {
-    background-color: white;
-    color: black;
-    border: 1px solid #ABABAB;
-    font-size: 16px;
-    outline: none;
+        background-color: white;
+        color: black;
+        border: 1px solid #ABABAB;
+        font-size: 16px;
+        outline: none;
 }
 
 QListView::item {
-    padding: 6px 0px;
+        padding: 6px 0px;
 }
 
 QListView::item:hover {
-    background-color: rgba(0, 113, 234, 0.1);
+        background-color: rgba(0, 113, 234, 0.1);
 }
 
 QListView::item:selected {
-    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #0070EA,stop:1 #0056CC);
+        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0070EA, stop:1 #0056CC);
 }
