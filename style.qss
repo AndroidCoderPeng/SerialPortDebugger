@@ -56,11 +56,6 @@ QComboBox QAbstractItemView {
         outline: 0;
 }
 
-/*下拉列表项*/
-QComboBox QAbstractItemView::item {
-        height: 24px;
-}
-
 /*下拉列表选中项*/
 QComboBox QAbstractItemView::item:selected {
         background-color: #3DB39E;
