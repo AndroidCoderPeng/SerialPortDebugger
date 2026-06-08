@@ -35,6 +35,8 @@ private:
 
   QList<PortMessage> history;
   QTimer *timerPtr = nullptr;
+  QList<QString> checkCodeTypes = {"无校验码",  "CRC-8", "CRC-16(L)",
+                                   "CRC-16(H)", "XOR",   "Checksum"};
 
   void updateComboxState(bool disabled) const;
 
@@ -69,7 +71,14 @@ private:
 
   void uncheckTimeCheckBox();
 
+  // 解码显示
+  void onDecodeCheckBoxStateChanged(const qint16 &state);
+
+  // 编码发送
   void onEncodeCheckBoxStateChanged(const qint16 &state);
+
+  QByteArray appendCheckCode(const QByteArray &command,
+                             const int &checkCodeType);
 
 private slots:
   void executeTask(const QString &command);

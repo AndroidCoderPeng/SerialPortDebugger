@@ -79,6 +79,7 @@ MainWindow::MainWindow(QMainWindow *parent)
   ui->dataBitBox->setView(new QListView());
   ui->parityBitBox->setView(new QListView());
   ui->stopBitBox->setView(new QListView());
+  ui->checkCodeBox->setView(new QListView());
 
   initPortParam(ui);
 
@@ -92,6 +93,11 @@ MainWindow::MainWindow(QMainWindow *parent)
 
   QIntValidator *validator = new QIntValidator(1, 99999, this);
   ui->timeLineEdit->setValidator(validator);
+
+  // 初始化校验码类型下拉框
+  for (const QString &type : checkCodeTypes) {
+    ui->checkCodeBox->addItem(type);
+  }
 
   // 初始化任务执行器
   executorPtr = new TaskExecutor(this);
@@ -122,6 +128,8 @@ MainWindow::MainWindow(QMainWindow *parent)
   connect(ui->timeCheckBox, &QCheckBox::stateChanged, this,
           &MainWindow::onTimeCheckBoxStateChanged);
   connect(ui->hexReceiveCheckBox, &QCheckBox::stateChanged, this,
+          &MainWindow::onDecodeCheckBoxStateChanged);
+  connect(ui->hexSendCheckBox, &QCheckBox::stateChanged, this,
           &MainWindow::onEncodeCheckBoxStateChanged);
 
   // ========== 一次性连接 SerialPortManager 的所有信号 ==========
@@ -372,7 +380,14 @@ void MainWindow::sendCommand(const QString &command) {
       QMessageBox::warning(this, "警告", "请输入16进制字符串！");
       return;
     }
-    const QByteArray data = Utils::formatHexString(command);
+    const QByteArray value = Utils::formatHexString(command);
+
+    // 需要判断校验码方式
+    const auto currentIndex = ui->checkCodeBox->currentIndex();
+    _logger.dFmt("采用【%s】校验方式发送指令",
+                 checkCodeTypes[currentIndex].toStdString().c_str());
+    const auto data = appendCheckCode(value, currentIndex);
+
     SerialPortManager::get()->write(data);
     updatePortMessageLog(data, "发");
   } else {
@@ -481,7 +496,7 @@ void MainWindow::uncheckTimeCheckBox() {
   ui->timeCheckBox->blockSignals(false);
 }
 
-void MainWindow::onEncodeCheckBoxStateChanged(const qint16 &state) {
+void MainWindow::onDecodeCheckBoxStateChanged(const qint16 &state) {
   ui->messageView->clear(); // 清空当前显示
   const QList<PortMessage> &listRef = history;
   if (state == Qt::Checked) {
@@ -523,6 +538,74 @@ void MainWindow::onEncodeCheckBoxStateChanged(const qint16 &state) {
   }
 
   ui->messageView->ensureCursorVisible(); // 自动滚到底部
+}
+
+void MainWindow::onEncodeCheckBoxStateChanged(const qint16 &state) {
+  if (state == Qt::Checked) {
+    ui->checkCodeBox->setDisabled(false);
+  } else {
+    ui->checkCodeBox->setDisabled(true);
+  }
+}
+
+QByteArray MainWindow::appendCheckCode(const QByteArray &command,
+                                       const int &checkCodeType) {
+  switch (checkCodeType) {
+  case 0:
+    // 无校验码，直接返回原始指令
+    return command;
+  case 1:
+    // CRC-8 校验码
+    {
+      uint8_t crc8 = Utils::calculateCRC8(command);
+      QByteArray result = command;
+      result.append(crc8);
+      return result;
+    }
+    break;
+  case 2:
+    // CRC-16(L) 校验码（低字节在前）
+    {
+      uint16_t crc16 = Utils::calculateCRC16(command);
+      QByteArray result = command;
+      result.append(crc16 & 0xFF);        // 低字节
+      result.append((crc16 >> 8) & 0xFF); // 高字节
+      return result;
+    }
+    break;
+  case 3:
+    // CRC-16(H) 校验码（高字节在前）
+    {
+      uint16_t crc16 = Utils::calculateCRC16(command);
+      QByteArray result = command;
+      result.append((crc16 >> 8) & 0xFF); // 高字节
+      result.append(crc16 & 0xFF);        // 低字节
+      return result;
+    }
+    break;
+  case 4:
+    // XOR 校验码
+    {
+      uint8_t xorCode = Utils::calculateXOR(command);
+      QByteArray result = command;
+      result.append(xorCode);
+      return result;
+    }
+    break;
+  case 5:
+    // Checksum 校验码（简单求和取反）
+    {
+      uint8_t checksum = Utils::calculateChecksum(command);
+      QByteArray result = command;
+      result.append(checksum);
+      return result;
+    }
+    break;
+  default:
+    // 理论上不应该出现这个分支，因为 UI 上的下拉框选项是固定的
+    // 为了安全起见，还是加上默认分支，直接返回原始指令
+    return command;
+  }
 }
 
 void MainWindow::executeTask(const QString &command) { sendCommand(command); }

@@ -19,6 +19,14 @@ public:
   static bool isHexString(const QString &command);
 
   static bool isPositiveInt(const QString &str);
+
+  static uint8_t calculateCRC8(const QByteArray &data);
+
+  static uint16_t calculateCRC16(const QByteArray &data);
+
+  static uint8_t calculateXOR(const QByteArray &data);
+
+  static uint8_t calculateChecksum(const QByteArray &data);
 };
 
 #endif // UTILS_H

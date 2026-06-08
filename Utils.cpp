@@ -51,3 +51,49 @@ bool Utils::isPositiveInt(const QString &str) {
   const int value = str.toInt(&ok);
   return ok && value > 0;
 }
+
+uint8_t Utils::calculateCRC8(const QByteArray &data) {
+  uint8_t crc = 0x00;
+  for (const auto &byte : data) {
+    crc ^= static_cast<uint8_t>(byte);
+    for (int i = 0; i < 8; ++i) {
+      if (crc & 0x80) {
+        crc = (crc << 1) ^ 0x07;
+      } else {
+        crc <<= 1;
+      }
+    }
+  }
+  return crc;
+}
+
+uint16_t Utils::calculateCRC16(const QByteArray &data) {
+  uint16_t crc = 0xFFFF;
+  for (const auto &byte : data) {
+    crc ^= static_cast<uint8_t>(byte);
+    for (int i = 0; i < 8; ++i) {
+      if (crc & 0x0001) {
+        crc = (crc >> 1) ^ 0xA001;
+      } else {
+        crc >>= 1;
+      }
+    }
+  }
+  return crc;
+}
+
+uint8_t Utils::calculateXOR(const QByteArray &data) {
+  uint8_t xorCode = 0x00;
+  for (const auto &byte : data) {
+    xorCode ^= static_cast<uint8_t>(byte);
+  }
+  return xorCode;
+}
+
+uint8_t Utils::calculateChecksum(const QByteArray &data) {
+  uint8_t checksum = 0x00;
+  for (const auto &byte : data) {
+    checksum += static_cast<uint8_t>(byte);
+  }
+  return ~checksum; // 取反
+}

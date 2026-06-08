@@ -184,6 +184,16 @@
          </widget>
         </item>
         <item>
+         <widget class="QCheckBox" name="hexSendCheckBox">
+          <property name="text">
+           <string>16进制发送</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -276,14 +286,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="hexSendCheckBox">
-            <property name="text">
-             <string>16进制</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
+           <widget class="QComboBox" name="checkCodeBox"/>
           </item>
          </layout>
         </item>
