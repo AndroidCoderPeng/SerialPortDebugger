@@ -47,4 +47,7 @@ RESOURCES += \
     style.qrc
 
 DISTFILES += \
+    screenshots/linux_amd.png \
+    screenshots/windows_10.png \
+    screenshots/windows_11.png \
     README.md
