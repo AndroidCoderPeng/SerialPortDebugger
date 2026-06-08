@@ -12,6 +12,7 @@ DebuggerApplication::DebuggerApplication(int &argc, char **argv)
   if (fontId != -1) {
     QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
     QFont font(fontFamily);
+    font.setPointSize(10);
     setFont(font);
   } else {
     _logger.w("Failed to load font.");

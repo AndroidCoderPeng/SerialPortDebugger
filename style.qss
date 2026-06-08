@@ -121,7 +121,7 @@ QListWidget::item:selected {
 /* 横向可拖动item的QListWidget */
 QListWidget#horizontalListWidget {
         padding: 5px 4px;
-        font-size: 16px;
+        font-size: 10pt;
         outline: none;
 }
 
@@ -190,7 +190,7 @@ QListView {
         background-color: white;
         color: black;
         border: 1px solid #ABABAB;
-        font-size: 16px;
+        font-size: 10pt;
         outline: none;
 }
 
