@@ -1,7 +1,8 @@
 #include "Logger.hpp"
 
-#include <iostream>
 #include <sstream>
+
+#include <QDebug>
 
 // ANSI 颜色码定义
 #define COLOR_RESET "\033[0m"
@@ -65,8 +66,8 @@ void Logger::log_raw(const LogLevel level, const char *msg) const {
     tag_str = tag_str.substr(0, TAG_MAX_WIDTH - 3) + "...";
   }
   const auto tag = tag_str + std::string(TAG_MAX_WIDTH - tag_str.length(), ' ');
-  std::cout << color << levelStr << COLOR_RESET << " [" << tag << "] " << msg
-            << std::endl;
+  qInfo() << color << levelStr.c_str() << COLOR_RESET << "[" << tag.c_str()
+          << "]" << msg;
 }
 
 void Logger::print_line(const std::string &content,

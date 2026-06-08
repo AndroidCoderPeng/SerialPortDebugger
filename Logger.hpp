@@ -84,23 +84,13 @@ public:
 private:
   const char *_tag_ptr;
   static constexpr auto TAG_MAX_WIDTH = 20; // 日志标签最大宽度，超过会被截断
-  static constexpr auto DEFAULT_WIDTH = 56; // 包括边框和空格在内的总宽度
-#ifdef _WIN32
-  static constexpr auto H_LINE = "-";
-  static constexpr auto V_LINE = "|";
-  static constexpr auto TOP_LEFT = "+";
-  static constexpr auto TOP_RIGHT = "+";
-  static constexpr auto BOTTOM_LEFT = "+";
-  static constexpr auto BOTTOM_RIGHT = "+";
-#else
-  // Linux, macOS 等
+  static constexpr auto DEFAULT_WIDTH = 64; // 包括边框和空格在内的总宽度
   static constexpr auto H_LINE = "─";
   static constexpr auto V_LINE = "│";
   static constexpr auto TOP_LEFT = "┌";
   static constexpr auto TOP_RIGHT = "┐";
   static constexpr auto BOTTOM_LEFT = "└";
   static constexpr auto BOTTOM_RIGHT = "┘";
-#endif
 
   void print_border(const char *left, const char *fill, const char *right,
                     LogLevel level) const;
