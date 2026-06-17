@@ -84,10 +84,7 @@ MainWindow::MainWindow(QMainWindow *parent)
   initPortParam(ui);
 
   DatabaseWrapper::get()->init();
-  const auto commands = DatabaseWrapper::get()->getAllCommands();
-  for (const auto &cmd : commands) {
-    updateCommandWidget(cmd.id, cmd.value, cmd.remark);
-  }
+  refreshCommandList();
 
   ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -115,8 +112,6 @@ MainWindow::MainWindow(QMainWindow *parent)
           &MainWindow::onSaveDataButtonClicked);
   connect(ui->clearDataButton, &QPushButton::clicked, this,
           &MainWindow::onClearDataButtonClicked);
-  connect(ui->addCommandButton, &QPushButton::clicked, this,
-          &MainWindow::onAddCommandButtonClicked);
   connect(ui->listWidget, &QListWidget::itemClicked, this,
           &MainWindow::onCommandItemClicked);
   connect(ui->listWidget, &QListWidget::customContextMenuRequested, this,
@@ -236,27 +231,23 @@ void MainWindow::onSaveDataButtonClicked() {
 
 void MainWindow::onClearDataButtonClicked() { ui->messageView->clear(); }
 
-void MainWindow::onAddCommandButtonClicked() {
-  SaveCommandDialog dialog(this);
-  if (dialog.exec() == QDialog::Accepted) {
-    const auto command = dialog.getInputValue();
-    const auto &value = command.value;
-    const auto &remark = command.remark;
-
-    if (DatabaseWrapper::get()->commandExists(value)) {
-      QMessageBox::warning(this, "警告", "该指令值已存在！");
-      return;
-    }
-
-    // 插入到数据库
-    DatabaseWrapper::get()->addCommand(value, remark);
-    // 重新加载列表
-    ui->listWidget->clear();
-    const auto commands = DatabaseWrapper::get()->getAllCommands();
-    for (const auto &cmd : commands) {
-      updateCommandWidget(cmd.id, cmd.value, cmd.remark);
-    }
+void MainWindow::refreshCommandList() {
+  ui->listWidget->clear();
+  const auto commands = DatabaseWrapper::get()->getAllCommands();
+  for (const auto &cmd : commands) {
+    updateCommandWidget(cmd.id, cmd.value, cmd.remark);
   }
+
+  // 末尾固定显示"添加新指令"占位项
+  auto *addItem = new QListWidgetItem(ui->listWidget);
+  addItem->setText("＋ 添加新指令");
+  addItem->setData(Qt::UserRole, kAddItemMagicId);
+  addItem->setFlags(addItem->flags() & ~Qt::ItemIsEditable);
+  addItem->setTextAlignment(Qt::AlignCenter);
+  QFont font = addItem->font();
+  font.setItalic(true);
+  addItem->setFont(font);
+  addItem->setForeground(Qt::gray);
 }
 
 void MainWindow::updateCommandWidget(const qint16 &id, const QString &command,
@@ -271,6 +262,12 @@ void MainWindow::updateCommandWidget(const qint16 &id, const QString &command,
 }
 
 void MainWindow::onCommandItemClicked(const QListWidgetItem *item) {
+  // 如果点击的是"添加新指令"占位项 → 弹出添加对话框
+  if (item->data(Qt::UserRole).toInt() == kAddItemMagicId) {
+    onAddCommandItemClicked();
+    return;
+  }
+
   auto *listItem = const_cast<QListWidgetItem *>(item);
   auto *itemWidget =
       qobject_cast<CommandItemWidget *>(ui->listWidget->itemWidget(listItem));
@@ -294,27 +291,51 @@ void MainWindow::onCommandItemClicked(const QListWidgetItem *item) {
   ui->userInputView->setText(itemWidget->command());
 }
 
+void MainWindow::onAddCommandItemClicked() {
+  SaveCommandDialog dialog(this);
+  if (dialog.exec() == QDialog::Accepted) {
+    const auto command = dialog.getInputValue();
+    const auto &value = command.value;
+    const auto &remark = command.remark;
+
+    if (DatabaseWrapper::get()->commandExists(value)) {
+      QMessageBox::warning(this, "警告", "该指令值已存在！");
+      return;
+    }
+
+    // 插入到数据库
+    DatabaseWrapper::get()->addCommand(value, remark);
+    refreshCommandList();
+  }
+}
+
 void MainWindow::showCommandWidgetContextMenu(const QPoint &pos) {
   const auto listWidget = qobject_cast<QListWidget *>(sender());
   if (listWidget) {
     const QListWidgetItem *item = listWidget->itemAt(pos);
-    if (item != nullptr) {
-      QMenu menu(this);
-      const QAction *sendAction = menu.addAction("发送");
-      const QAction *copyAction = menu.addAction("复制");
-      const QAction *editAction = menu.addAction("编辑");
-      const QAction *deleteAction = menu.addAction("删除");
-      const QAction *selectedAction =
-          menu.exec(listWidget->viewport()->mapToGlobal(pos));
-      if (selectedAction == sendAction) {
-        onCustomAction(item, "0");
-      } else if (selectedAction == copyAction) {
-        onCustomAction(item, "1");
-      } else if (selectedAction == editAction) {
-        onCustomAction(item, "2");
-      } else if (selectedAction == deleteAction) {
-        onCustomAction(item, "3");
-      }
+    if (item == nullptr)
+      return;
+
+    // "添加新指令"占位项不显示右键菜单
+    if (item->data(Qt::UserRole).toInt() == kAddItemMagicId) {
+      return;
+    }
+
+    QMenu menu(this);
+    const QAction *sendAction = menu.addAction("发送");
+    const QAction *copyAction = menu.addAction("复制");
+    const QAction *editAction = menu.addAction("编辑");
+    const QAction *deleteAction = menu.addAction("删除");
+    const QAction *selectedAction =
+        menu.exec(listWidget->viewport()->mapToGlobal(pos));
+    if (selectedAction == sendAction) {
+      onCustomAction(item, "0");
+    } else if (selectedAction == copyAction) {
+      onCustomAction(item, "1");
+    } else if (selectedAction == editAction) {
+      onCustomAction(item, "2");
+    } else if (selectedAction == deleteAction) {
+      onCustomAction(item, "3");
     }
   }
 }

@@ -37,6 +37,7 @@ private:
   QTimer *timerPtr = nullptr;
   QList<QString> checkCodeTypes = {"无校验码",  "CRC-8", "CRC-16(L)",
                                    "CRC-16(H)", "XOR",   "Checksum"};
+  static constexpr int kAddItemMagicId = -999; // 标记"添加新指令"占位项
 
   void updateComboxState(bool disabled) const;
 
@@ -48,9 +49,11 @@ private:
 
   void onClearDataButtonClicked();
 
-  void onAddCommandButtonClicked();
+  void refreshCommandList();
 
   void onCommandItemClicked(const QListWidgetItem *item);
+
+  void onAddCommandItemClicked();
 
   void updateCommandWidget(const qint16 &id, const QString &command,
                            const QString &remark);
@@ -82,6 +85,7 @@ private:
 
 private slots:
   void executeTask(const QString &command);
+
   void onScriptFinished();
 };
 
