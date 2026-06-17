@@ -8,9 +8,9 @@ class CommandItemWidget : public QWidget {
   Q_OBJECT
 
 public:
-  explicit CommandItemWidget(const QString &command = QString(),
-                             const QString &remark = QString(),
-                             QWidget *parent = nullptr);
+  CommandItemWidget(const QString &command = QString(),
+                    const QString &remark = QString(),
+                    QWidget *parent = nullptr);
   void setSelected(bool selected);
   void setCommand(const QString &command);
   void setRemark(const QString &remark);

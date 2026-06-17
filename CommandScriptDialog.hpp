@@ -16,7 +16,7 @@ class CommandScriptDialog : public QDialog {
   Q_OBJECT
 
 public:
-  explicit CommandScriptDialog(
+  CommandScriptDialog(
       QWidget *parent = nullptr,
       const QList<DatabaseCommand> commands = QList<DatabaseCommand>());
   ~CommandScriptDialog();

@@ -84,7 +84,7 @@ MainWindow::MainWindow(QMainWindow *parent)
   initPortParam(ui);
 
   DatabaseWrapper::get()->init();
-  refreshCommandList();
+  updateCommandList();
 
   ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -146,6 +146,20 @@ MainWindow::MainWindow(QMainWindow *parent)
           [this](const QString &msg) {
             QMessageBox::critical(this, "串口错误", msg);
           });
+}
+
+void MainWindow::updateCommandList() {
+  ui->listWidget->clear();
+  const auto commands = DatabaseWrapper::get()->getAllCommands();
+  for (int i = 0; i < commands.size(); ++i) {
+    if (i == commands.size() - 1) {
+      // 末尾固定显示"添加新指令"占位项
+      updateCommandWidget(kAddItemMagicId, "＋", "添加新指令");
+    } else {
+      const auto cmd = commands.at(i);
+      updateCommandWidget(cmd.id, cmd.value, cmd.remark);
+    }
+  }
 }
 
 void MainWindow::updateComboxState(const bool disabled) const {
@@ -231,25 +245,6 @@ void MainWindow::onSaveDataButtonClicked() {
 
 void MainWindow::onClearDataButtonClicked() { ui->messageView->clear(); }
 
-void MainWindow::refreshCommandList() {
-  ui->listWidget->clear();
-  const auto commands = DatabaseWrapper::get()->getAllCommands();
-  for (const auto &cmd : commands) {
-    updateCommandWidget(cmd.id, cmd.value, cmd.remark);
-  }
-
-  // 末尾固定显示"添加新指令"占位项
-  auto *addItem = new QListWidgetItem(ui->listWidget);
-  addItem->setText("＋ 添加新指令");
-  addItem->setData(Qt::UserRole, kAddItemMagicId);
-  addItem->setFlags(addItem->flags() & ~Qt::ItemIsEditable);
-  addItem->setTextAlignment(Qt::AlignCenter);
-  QFont font = addItem->font();
-  font.setItalic(true);
-  addItem->setFont(font);
-  addItem->setForeground(Qt::gray);
-}
-
 void MainWindow::updateCommandWidget(const qint16 &id, const QString &command,
                                      const QString &remark) {
   auto *listItem = new QListWidgetItem(ui->listWidget);
@@ -305,7 +300,7 @@ void MainWindow::onAddCommandItemClicked() {
 
     // 插入到数据库
     DatabaseWrapper::get()->addCommand(value, remark);
-    refreshCommandList();
+    updateCommandList();
   }
 }
 

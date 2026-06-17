@@ -39,6 +39,8 @@ private:
                                    "CRC-16(H)", "XOR",   "Checksum"};
   static constexpr int kAddItemMagicId = -999; // 标记"添加新指令"占位项
 
+  void updateCommandList();
+
   void updateComboxState(bool disabled) const;
 
   void onOpenPortButtonClicked();
@@ -48,8 +50,6 @@ private:
   void onSaveDataButtonClicked();
 
   void onClearDataButtonClicked();
-
-  void refreshCommandList();
 
   void onCommandItemClicked(const QListWidgetItem *item);
 

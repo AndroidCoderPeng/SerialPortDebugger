@@ -10,7 +10,7 @@ class SerialPortObserver : public QThread {
   Q_OBJECT
 
 public:
-  SerialPortObserver(QObject *parent = nullptr);
+  explicit SerialPortObserver(QObject *parent = nullptr);
   ~SerialPortObserver();
 
   static inline SerialPortObserver *get() {
