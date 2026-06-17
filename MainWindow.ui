@@ -32,6 +32,55 @@
       <property name="spacing">
        <number>8</number>
       </property>
+      <!-- ====== Row 0 ====== -->
+      <item row="0" column="0" colspan="2">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>串口号</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" colspan="3">
+       <widget class="QComboBox" name="portNameBox"/>
+      </item>
+      <!-- ====== Row 1 ====== -->
+      <item row="1" column="0" colspan="2">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>波特率</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" colspan="3">
+       <widget class="QComboBox" name="baudRateBox">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <!-- ====== Row 2 ====== -->
+      <item row="2" column="0" colspan="2">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>数据位</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2" colspan="3">
+       <widget class="QComboBox" name="dataBitBox"/>
+      </item>
+      <!-- ====== Row 3 ====== -->
+      <item row="3" column="0" colspan="2">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>校验位</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2" colspan="3">
+       <widget class="QComboBox" name="parityBitBox"/>
+      </item>
+      <!-- ====== Row 4 ====== -->
       <item row="4" column="0" colspan="2">
        <widget class="QLabel" name="label_5">
         <property name="text">
@@ -42,37 +91,11 @@
       <item row="4" column="2" colspan="3">
        <widget class="QComboBox" name="stopBitBox"/>
       </item>
-      <item row="0" column="2" colspan="3">
-       <widget class="QComboBox" name="portNameBox"/>
-      </item>
+      <!-- ====== Row 5 ====== -->
       <item row="5" column="0" colspan="2">
        <widget class="QPushButton" name="refreshButton">
         <property name="text">
          <string>刷新串口</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="2" colspan="3">
-       <widget class="QPushButton" name="clearDataButton">
-        <property name="text">
-         <string>清空数据</string>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="0" colspan="4">
-       <widget class="QLabel" name="label_7">
-        <property name="text">
-         <string>扩展指令</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="2" colspan="3">
-       <widget class="QComboBox" name="parityBitBox"/>
-      </item>
-      <item row="7" column="0" colspan="2">
-       <widget class="QPushButton" name="saveDataButton">
-        <property name="text">
-         <string>保存数据</string>
         </property>
        </widget>
       </item>
@@ -83,7 +106,30 @@
         </property>
        </widget>
       </item>
-      <item row="8" column="4">
+      <!-- ====== Row 6 ====== -->
+      <item row="6" column="0" colspan="2">
+       <widget class="QPushButton" name="saveDataButton">
+        <property name="text">
+         <string>保存数据</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2" colspan="3">
+       <widget class="QPushButton" name="clearDataButton">
+        <property name="text">
+         <string>清空数据</string>
+        </property>
+       </widget>
+      </item>
+      <!-- ====== Row 7 ====== -->
+      <item row="7" column="0" colspan="4">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>扩展指令</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="4">
        <widget class="QPushButton" name="addCommandButton">
         <property name="minimumSize">
          <size>
@@ -106,44 +152,11 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0" colspan="2">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>校验位</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" colspan="2">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>串口号</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>数据位</string>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="0" colspan="5">
+      <!-- ====== Row 8 ====== -->
+      <item row="8" column="0" colspan="5">
        <widget class="QListWidget" name="listWidget">
         <property name="verticalScrollBarPolicy">
          <enum>Qt::ScrollBarAlwaysOff</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2" colspan="3">
-       <widget class="QComboBox" name="dataBitBox"/>
-      </item>
-      <item row="1" column="2" colspan="3">
-       <widget class="QComboBox" name="baudRateBox"/>
-      </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>波特率</string>
         </property>
        </widget>
       </item>
