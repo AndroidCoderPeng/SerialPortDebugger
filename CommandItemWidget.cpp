@@ -21,16 +21,6 @@ CommandItemWidget::CommandItemWidget(const QString &command,
   setContent(command, remark);
 }
 
-void CommandItemWidget::setSelected(bool selected) {
-  if (selected) {
-    commandLabelPtr->setStyleSheet("color: white;");
-    remarkLabelPtr->setStyleSheet("font-size: 12px; color: white;");
-  } else {
-    commandLabelPtr->setStyleSheet("color: black;");
-    remarkLabelPtr->setStyleSheet("font-size: 12px; color: #757575;");
-  }
-}
-
 void CommandItemWidget::setCommand(const QString &command) {
   _command = command;
   commandLabelPtr->setText(command);

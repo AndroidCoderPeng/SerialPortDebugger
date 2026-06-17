@@ -31,7 +31,6 @@ private:
   Ui::MainWindow *ui;
   Logger _logger;
   TaskExecutor *executorPtr = nullptr;
-  QListWidgetItem *previousSelectedItemPtr = nullptr;
 
   QList<PortMessage> history;
   QTimer *timerPtr = nullptr;

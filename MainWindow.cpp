@@ -270,19 +270,6 @@ void MainWindow::onCommandItemClicked(const QListWidgetItem *item) {
     return;
   }
 
-  // 取消之前的选中状态
-  if (previousSelectedItemPtr && previousSelectedItemPtr != listItem) {
-    auto *prevWidget = qobject_cast<CommandItemWidget *>(
-        ui->listWidget->itemWidget(previousSelectedItemPtr));
-    if (prevWidget) {
-      prevWidget->setSelected(false);
-    }
-  }
-
-  // 设置当前项为选中状态
-  itemWidget->setSelected(true);
-  previousSelectedItemPtr = listItem;
-
   ui->userInputView->setText(itemWidget->command());
 }
 
