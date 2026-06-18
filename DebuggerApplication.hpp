@@ -4,7 +4,6 @@
 #pragma once
 #include <QApplication>
 
-#include "Logger.hpp"
 #include "MainWindow.hpp"
 
 class DebuggerApplication : public QApplication {
@@ -15,7 +14,6 @@ public:
   ~DebuggerApplication();
 
 private:
-  Logger _logger;
   MainWindow *mainWindowPtr;
 
   void initMainWindow();

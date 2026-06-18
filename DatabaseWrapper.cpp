@@ -1,4 +1,5 @@
 #include "DatabaseWrapper.hpp"
+#include "Logger.hpp"
 #include "qvariant.h"
 
 #include <QSqlError>
@@ -6,8 +7,7 @@
 
 DatabaseWrapper *DatabaseWrapper::_instancePtr = nullptr;
 
-DatabaseWrapper::DatabaseWrapper()
-    : _logger("DatabaseWrapper"), _queryPtr{nullptr} {}
+DatabaseWrapper::DatabaseWrapper() : _queryPtr{nullptr} {}
 
 DatabaseWrapper::~DatabaseWrapper() {
   if (_queryPtr) {
@@ -27,8 +27,9 @@ bool DatabaseWrapper::init() {
   _db.setDatabaseName("commands.db");
 
   if (!_db.open()) {
-    _logger.eFmt("数据库打开失败：%s",
-                 _db.lastError().text().toStdString().c_str());
+    Logger::Tag("DatabaseWrapper")
+        .eFmt("数据库打开失败：%s",
+              _db.lastError().text().toStdString().c_str());
     return false;
   }
 
@@ -38,8 +39,9 @@ bool DatabaseWrapper::init() {
                        "id INTEGER PRIMARY KEY, "
                        "value TEXT UNIQUE, "
                        "remark TEXT)")) {
-    _logger.eFmt("表创建失败：%s",
-                 _queryPtr->lastError().text().toStdString().c_str());
+    Logger::Tag("DatabaseWrapper")
+        .eFmt("表创建失败：%s",
+              _queryPtr->lastError().text().toStdString().c_str());
     return false;
   }
 
@@ -65,8 +67,9 @@ void DatabaseWrapper::initDefaultCommands() {
       _queryPtr->addBindValue(cmd.value);
       _queryPtr->addBindValue(cmd.remark);
       if (!_queryPtr->exec()) {
-        _logger.eFmt("插入默认指令失败：%s",
-                     _queryPtr->lastError().text().toStdString().c_str());
+        Logger::Tag("DatabaseWrapper")
+            .eFmt("插入默认指令失败：%s",
+                  _queryPtr->lastError().text().toStdString().c_str());
       }
     }
   }
@@ -79,8 +82,9 @@ void DatabaseWrapper::addCommand(const QString &command,
   _queryPtr->addBindValue(remark);
 
   if (!_queryPtr->exec()) {
-    _logger.eFmt("插入失败：%s",
-                 _queryPtr->lastError().text().toStdString().c_str());
+    Logger::Tag("DatabaseWrapper")
+        .eFmt("插入失败：%s",
+              _queryPtr->lastError().text().toStdString().c_str());
   }
 }
 
@@ -92,8 +96,9 @@ void DatabaseWrapper::updateCommand(int id, const QString &command,
   _queryPtr->addBindValue(id);
 
   if (!_queryPtr->exec()) {
-    _logger.eFmt("更新失败：%s",
-                 _queryPtr->lastError().text().toStdString().c_str());
+    Logger::Tag("DatabaseWrapper")
+        .eFmt("更新失败：%s",
+              _queryPtr->lastError().text().toStdString().c_str());
   }
 }
 
@@ -102,8 +107,9 @@ void DatabaseWrapper::deleteCommand(int id) {
   _queryPtr->addBindValue(id);
 
   if (!_queryPtr->exec()) {
-    _logger.eFmt("删除失败：%s",
-                 _queryPtr->lastError().text().toStdString().c_str());
+    Logger::Tag("DatabaseWrapper")
+        .eFmt("删除失败：%s",
+              _queryPtr->lastError().text().toStdString().c_str());
   }
 }
 
@@ -111,7 +117,8 @@ QList<DatabaseCommand> DatabaseWrapper::getAllCommands() {
   QList<DatabaseCommand> commands;
 
   if (!_queryPtr->exec("SELECT id, value, remark FROM commands")) {
-    _logger.e(_queryPtr->lastError().text().toStdString().c_str());
+    Logger::Tag("DatabaseWrapper")
+        .e(_queryPtr->lastError().text().toStdString().c_str());
     return commands;
   }
 

@@ -1,5 +1,7 @@
 #include "SerialPortObserver.hpp"
 
+#include "Logger.hpp"
+
 #include <QSerialPort>
 
 #ifdef _WIN32
@@ -9,10 +11,9 @@
 #endif
 #define BaudRate 19200
 
-SerialPortObserver::SerialPortObserver(QObject *parent)
-    : QThread(), _logger("SerialPortObserver") {
+SerialPortObserver::SerialPortObserver(QObject *parent) : QThread() {
   this->start();
-  _logger.i("initialized succeed.");
+  Logger::Tag("SerialPortObserver").i("initialized succeed.");
 }
 
 // 需要改为通过按钮控制串口开关，然后再开始读数
@@ -28,12 +29,14 @@ void SerialPortObserver::run() {
   while (!isInterruptionRequested()) {
     if (!serialPort.isOpen()) {
       if (!serialPort.open(QIODevice::ReadOnly)) {
-        _logger.eFmt("Failed to open %s: %s", PortName,
-                     serialPort.errorString().toStdString().c_str());
+        Logger::Tag("SerialPortObserver")
+            .eFmt("Failed to open %s: %s", PortName,
+                  serialPort.errorString().toStdString().c_str());
         msleep(1000);
         continue;
       }
-      _logger.dFmt("%s opened successfully, baud %d", PortName, BaudRate);
+      Logger::Tag("SerialPortObserver")
+          .dFmt("%s opened successfully, baud %d", PortName, BaudRate);
     }
 
     if (serialPort.waitForReadyRead(200)) {
@@ -57,8 +60,9 @@ void SerialPortObserver::run() {
       continue;
     }
 
-    _logger.eFmt("Serial error: %s",
-                 serialPort.errorString().toStdString().c_str());
+    Logger::Tag("SerialPortObserver")
+        .eFmt("Serial error: %s",
+              serialPort.errorString().toStdString().c_str());
 
     serialPort.close();
     msleep(300);
@@ -66,7 +70,7 @@ void SerialPortObserver::run() {
 
   if (serialPort.isOpen()) {
     serialPort.close();
-    _logger.dFmt("%s closed", PortName);
+    Logger::Tag("SerialPortObserver").dFmt("%s closed", PortName);
   }
 }
 

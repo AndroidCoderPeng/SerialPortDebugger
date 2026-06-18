@@ -1,12 +1,13 @@
 #include "DebuggerApplication.hpp"
 
+#include "Logger.hpp"
+
 #include <QFile>
 #include <QFontDatabase>
 #include <QScreen>
 
 DebuggerApplication::DebuggerApplication(int &argc, char **argv)
-    : QApplication(argc, argv), _logger("DebuggerApplication"),
-      mainWindowPtr(nullptr) {
+    : QApplication(argc, argv), mainWindowPtr(nullptr) {
 
   int fontId = QFontDatabase::addApplicationFont(":/msyh.ttc");
   if (fontId != -1) {
@@ -15,7 +16,7 @@ DebuggerApplication::DebuggerApplication(int &argc, char **argv)
     font.setPointSize(10);
     setFont(font);
   } else {
-    _logger.w("Failed to load font.");
+    Logger::Tag("DebuggerApplication").w("Failed to load font.");
   }
 
   QFile styleFile(":/style.qss");
@@ -24,7 +25,7 @@ DebuggerApplication::DebuggerApplication(int &argc, char **argv)
     setStyleSheet(style);
     styleFile.close();
   } else {
-    _logger.w("Failed to load style.");
+    Logger::Tag("DebuggerApplication").w("Failed to load style.");
   }
 
   initMainWindow();
@@ -44,12 +45,13 @@ void DebuggerApplication::initMainWindow() {
   mainWindowPtr->move((rect.width() - mainWindowPtr->width()) / 2,
                       (rect.height() - mainWindowPtr->height()) / 2);
   mainWindowPtr->show();
-  _logger.d("MainWindow initialized and shown.");
+  Logger::Tag("DebuggerApplication").d("MainWindow initialized and shown.");
 }
 
 DebuggerApplication::~DebuggerApplication() {
   // QThread 子对象会随 Application 销毁自动 quit/wait
   delete mainWindowPtr;
   mainWindowPtr = nullptr;
-  _logger.d("DebuggerApplication is being destroyed, cleaning up resources.");
+  Logger::Tag("DebuggerApplication")
+      .d("DebuggerApplication is being destroyed, cleaning up resources.");
 }

@@ -8,7 +8,6 @@
 #include <QListWidgetItem>
 #include <QMainWindow>
 
-#include "Logger.hpp"
 #include "TaskExecutor.hpp"
 
 QT_BEGIN_NAMESPACE
@@ -29,7 +28,7 @@ public:
 
 private:
   Ui::MainWindow *ui;
-  Logger _logger;
+
   TaskExecutor *executorPtr = nullptr;
 
   QList<PortMessage> history;

@@ -21,6 +21,7 @@
 #include "CommandItemWidget.hpp"
 #include "CommandScriptDialog.hpp"
 #include "DatabaseWrapper.hpp"
+#include "Logger.hpp"
 #include "SaveCommandDialog.hpp"
 #include "SerialPortManager.hpp"
 #include "TaskExecutor.hpp"
@@ -69,8 +70,7 @@ static void initPortParam(const Ui::MainWindow *ui) {
 }
 
 MainWindow::MainWindow(QMainWindow *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), _logger("MainWindow"),
-      executorPtr(nullptr) {
+    : QMainWindow(parent), ui(new Ui::MainWindow), executorPtr(nullptr) {
   ui->setupUi(this);
 
   // 清除QComboBox的QAbstractItemView::item默认QSS
@@ -387,8 +387,9 @@ void MainWindow::sendCommand(const QString &command) {
 
     // 需要判断校验码方式
     const auto currentIndex = ui->checkCodeBox->currentIndex();
-    _logger.dFmt("采用【%s】校验方式发送指令",
-                 checkCodeTypes[currentIndex].toStdString().c_str());
+    Logger::Tag("MainWindow")
+        .dFmt("采用【%s】校验方式发送指令",
+              checkCodeTypes[currentIndex].toStdString().c_str());
     const auto data = appendCheckCode(value, currentIndex);
 
     SerialPortManager::get()->write(data);

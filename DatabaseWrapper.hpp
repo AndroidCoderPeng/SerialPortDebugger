@@ -2,7 +2,6 @@
 #define DATABASEWRAPPER_HPP
 
 #include "GlobalDefinition.hpp"
-#include "Logger.hpp"
 
 #include <QSqlDatabase>
 #include <QString>
@@ -23,7 +22,7 @@ private:
   ~DatabaseWrapper();
 
   static DatabaseWrapper *_instancePtr;
-  Logger _logger;
+
   QSqlDatabase _db;
   QSqlQuery *_queryPtr;
 
