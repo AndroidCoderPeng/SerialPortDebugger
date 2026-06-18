@@ -118,6 +118,8 @@ MainWindow::MainWindow(QMainWindow *parent)
           &MainWindow::showCommandWidgetContextMenu);
   connect(ui->sendDataButton, &QPushButton::clicked, this,
           &MainWindow::onSendCommandButtonClicked);
+  connect(ui->historyListWidget, &QListWidget::itemClicked, this,
+          &MainWindow::onHistoryItemClicked);
   connect(ui->scriptButton, &QPushButton::clicked, this,
           &MainWindow::onScriptButtonClicked);
   connect(ui->timeCheckBox, &QCheckBox::stateChanged, this,
@@ -377,6 +379,7 @@ void MainWindow::sendCommand(const QString &command) {
     return;
   }
 
+  QByteArray data{};
   if (ui->hexSendCheckBox->isChecked()) {
     // 检查输入的是不是16进制字符串
     if (!Utils::isHexString(command)) {
@@ -390,15 +393,13 @@ void MainWindow::sendCommand(const QString &command) {
     Logger::Tag("MainWindow")
         .dFmt("采用【%s】校验方式发送指令",
               checkCodeTypes[currentIndex].toStdString().c_str());
-    const auto data = appendCheckCode(value, currentIndex);
-
-    SerialPortManager::get()->write(data);
-    updatePortMessageLog(data, "发");
+    data = appendCheckCode(value, currentIndex);
   } else {
-    const QByteArray data = command.toUtf8();
-    SerialPortManager::get()->write(data);
-    updatePortMessageLog(data, "发");
+    data = command.toUtf8();
   }
+  SerialPortManager::get()->write(data);
+  updatePortMessageLog(data, "发");
+  updateHistoryListWidget(command);
 }
 
 void MainWindow::updatePortMessageLog(const QByteArray &data,
@@ -427,6 +428,29 @@ void MainWindow::updatePortMessageLog(const QByteArray &data,
 
   ui->messageView->setTextCursor(cursor);
   ui->messageView->ensureCursorVisible(); // 自动滚到底部
+}
+
+void MainWindow::updateHistoryListWidget(const QString &command) {
+  // 去重：如果已存在相同指令，先移除旧的
+  for (int i = 0; i < ui->historyListWidget->count(); ++i) {
+    if (ui->historyListWidget->item(i)->text() == command) {
+      delete ui->historyListWidget->takeItem(i);
+      break;
+    }
+  }
+
+  // 插入到列表顶部
+  ui->historyListWidget->insertItem(0, command);
+
+  // 限制历史记录数量（保留最近50条）
+  constexpr int maxHistory = 50;
+  while (ui->historyListWidget->count() > maxHistory) {
+    delete ui->historyListWidget->takeItem(ui->historyListWidget->count() - 1);
+  }
+}
+
+void MainWindow::onHistoryItemClicked(QListWidgetItem *item) {
+  ui->userInputView->setText(item->text());
 }
 
 void MainWindow::onScriptButtonClicked() {

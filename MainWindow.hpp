@@ -66,6 +66,10 @@ private:
 
   void updatePortMessageLog(const QByteArray &data, const QString &direction);
 
+  void updateHistoryListWidget(const QString &command);
+
+  void onHistoryItemClicked(QListWidgetItem *item);
+
   void onScriptButtonClicked();
 
   void onTimeCheckBoxStateChanged(const qint16 &state);
