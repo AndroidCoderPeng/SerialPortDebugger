@@ -8,9 +8,10 @@ CommandItemWidget::CommandItemWidget(const QString &command,
       remarkLabelPtr(new QLabel(this)) {
   auto *layout = new QVBoxLayout(this);
   layout->setContentsMargins(4, 4, 4, 4);
-  layout->setSpacing(2);
+  layout->setSpacing(8);
 
-  remarkLabelPtr->setStyleSheet("font-size: 12px; color: #757575;");
+  commandLabelPtr->setStyleSheet("font-size: 10pt; color: #000000;");
+  remarkLabelPtr->setStyleSheet("font-size: 9pt; color: #757575;");
 
   commandLabelPtr->setWordWrap(false);
   remarkLabelPtr->setWordWrap(false);
