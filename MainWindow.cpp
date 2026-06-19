@@ -96,6 +96,9 @@ MainWindow::MainWindow(QMainWindow *parent)
     ui->checkCodeBox->addItem(type);
   }
 
+  // 初始化发送/接收字节数
+  updateTxRxBytes();
+
   // 初始化任务执行器
   executorPtr = new TaskExecutor(this);
   connect(executorPtr, &TaskExecutor::taskExecuted, this,
@@ -245,7 +248,13 @@ void MainWindow::onSaveDataButtonClicked() {
   file.close();
 }
 
-void MainWindow::onClearDataButtonClicked() { ui->messageView->clear(); }
+void MainWindow::onClearDataButtonClicked() {
+  ui->messageView->clear();
+  history.clear();
+  txBytes = 0;
+  rxBytes = 0;
+  updateTxRxBytes();
+}
 
 void MainWindow::updateCommandWidget(const qint16 &id, const QString &command,
                                      const QString &remark) {
@@ -404,6 +413,13 @@ void MainWindow::sendCommand(const QString &command) {
 
 void MainWindow::updatePortMessageLog(const QByteArray &data,
                                       const QString &direction) {
+  if (direction == "收") {
+    rxBytes += data.size();
+  } else {
+    txBytes += data.size();
+  }
+  updateTxRxBytes();
+
   const PortMessage msg(data, direction, QDateTime::currentMSecsSinceEpoch());
   history.append(msg);
 
@@ -634,6 +650,21 @@ QByteArray MainWindow::appendCheckCode(const QByteArray &command,
     // 为了安全起见，还是加上默认分支，直接返回原始指令
     return command;
   }
+}
+
+void MainWindow::updateTxRxBytes() {
+  auto formatBytes = [](qint64 bytes) -> QString {
+    if (bytes < 1024) {
+      return QString("%1 B").arg(bytes);
+    } else if (bytes < 1024 * 1024) {
+      return QString("%1 KB").arg(bytes / 1024.0, 0, 'f', 1);
+    } else {
+      return QString("%1 MB").arg(bytes / (1024.0 * 1024.0), 0, 'f', 2);
+    }
+  };
+
+  ui->rxLabel->setText(QString("已接收: %1").arg(formatBytes(rxBytes)));
+  ui->txLabel->setText(QString("已发送: %1").arg(formatBytes(txBytes)));
 }
 
 void MainWindow::executeTask(const QString &command) { sendCommand(command); }

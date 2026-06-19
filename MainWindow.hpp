@@ -36,6 +36,8 @@ private:
   QList<QString> checkCodeTypes = {"无校验码",  "CRC-8", "CRC-16(L)",
                                    "CRC-16(H)", "XOR",   "Checksum"};
   static constexpr int kAddItemMagicId = -999; // 标记"添加新指令"占位项
+  qint64 txBytes = 0;                          // 发送字节数
+  qint64 rxBytes = 0;                          // 接收字节数
 
   void updateCommandList();
 
@@ -84,6 +86,8 @@ private:
 
   QByteArray appendCheckCode(const QByteArray &command,
                              const int &checkCodeType);
+
+  void updateTxRxBytes();
 
 private slots:
   void executeTask(const QString &command);
