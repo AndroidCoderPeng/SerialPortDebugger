@@ -406,6 +406,12 @@ void MainWindow::sendCommand(const QString &command) {
   } else {
     data = command.toUtf8();
   }
+
+  // 追加换行符选项
+  if (ui->lineBreakCheckBox->isChecked()) {
+    data.append("\r\n");
+  }
+
   SerialPortManager::get()->write(data);
   updatePortMessageLog(data, "发");
   updateHistoryListWidget(command);
