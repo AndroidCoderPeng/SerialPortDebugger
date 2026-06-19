@@ -178,7 +178,7 @@
                     </layout>
                 </item>
                 <item>
-                    <layout class="QVBoxLayout" name="verticalLayout" stretch="9,0,1">
+                    <layout class="QVBoxLayout" name="verticalLayout" stretch="9,0,1,0">
                         <property name="spacing">
                             <number>8</number>
                         </property>

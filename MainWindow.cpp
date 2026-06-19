@@ -88,6 +88,9 @@ MainWindow::MainWindow(QMainWindow *parent)
 
   ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
+  QFont font("Noto Sans SC", 10);
+  ui->messageView->setFont(font);
+
   QIntValidator *validator = new QIntValidator(1, 99999, this);
   ui->timeLineEdit->setValidator(validator);
 
@@ -442,11 +445,13 @@ void MainWindow::updatePortMessageLog(const QByteArray &data,
     QTextCharFormat format;
     format.setForeground(Qt::darkGreen); // 接收用绿色
     cursor.setCharFormat(format);
+    cursor.insertText(
+        QString("[ %1 ]收←◆%2\n").arg(msg.formattedTime, dataStr));
   } else {
     cursor.setCharFormat(QTextCharFormat()); // 恢复默认格式
+    cursor.insertText(
+        QString("[ %1 ]发→◇%2\n").arg(msg.formattedTime, dataStr));
   }
-  cursor.insertText(
-      QString("[%1]【%2】%3\n").arg(msg.formattedTime, msg.direction, dataStr));
 
   ui->messageView->setTextCursor(cursor);
   ui->messageView->ensureCursorVisible(); // 自动滚到底部
