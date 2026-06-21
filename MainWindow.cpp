@@ -458,26 +458,39 @@ void MainWindow::updatePortMessageLog(const QByteArray &data,
 }
 
 void MainWindow::updateHistoryListWidget(const QString &command) {
-  // 去重：如果已存在相同指令，先移除旧的
+  // 如果已存在相同指令，先移除旧的，但是更新指令时间
   for (int i = 0; i < ui->historyListWidget->count(); ++i) {
-    if (ui->historyListWidget->item(i)->text() == command) {
+    QListWidgetItem *item = ui->historyListWidget->item(i);
+    auto *widget = qobject_cast<CommandItemWidget *>(
+        ui->historyListWidget->itemWidget(item));
+    if (widget && widget->command() == command) {
       delete ui->historyListWidget->takeItem(i);
       break;
     }
   }
 
-  // 插入到列表顶部
-  ui->historyListWidget->insertItem(0, command);
+  // 不存在则插入新的到列表顶部
+  auto *listItem = new QListWidgetItem(ui->historyListWidget);
+  const int id = QDateTime::currentMSecsSinceEpoch() % 100000;
+  listItem->setData(Qt::UserRole, id);
+  listItem->setFlags(listItem->flags() & ~Qt::ItemIsEditable);
 
-  // 限制历史记录数量（保留最近50条）
-  constexpr int maxHistory = 50;
-  while (ui->historyListWidget->count() > maxHistory) {
-    delete ui->historyListWidget->takeItem(ui->historyListWidget->count() - 1);
-  }
+  const QString time = QDateTime::currentDateTime().toString("HH:mm:ss.zzz");
+  auto *itemWidget =
+      new CommandItemWidget(command, time, ui->historyListWidget);
+  listItem->setSizeHint(itemWidget->sizeHint());
+  ui->historyListWidget->setItemWidget(listItem, itemWidget);
 }
 
 void MainWindow::onHistoryItemClicked(QListWidgetItem *item) {
-  ui->userInputView->setText(item->text());
+  auto *listItem = const_cast<QListWidgetItem *>(item);
+  auto *itemWidget = qobject_cast<CommandItemWidget *>(
+      ui->historyListWidget->itemWidget(listItem));
+  if (!itemWidget) {
+    return;
+  }
+
+  ui->userInputView->setText(itemWidget->command());
 }
 
 void MainWindow::onScriptButtonClicked() {
