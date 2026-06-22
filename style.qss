@@ -13,6 +13,14 @@ QDialog {
 QLabel {
 	color:#333333;
 }
+QMenuBar {
+	background-color:#F5F5F5;
+	color:#333333;
+	border-bottom:1px solid #E0E0E0;
+}
+QMenuBar::item:selected {
+	background-color:rgba(0,122,255,0.12);
+}
 /* ====== QComboBox ====== */
 QComboBox {
 	background-color:#F5F5F5;
