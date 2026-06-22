@@ -113,34 +113,6 @@ QPushButton#cancelButton:hover {
     border-color: #3DB39E;
 }
 
-/* ====== QTabWidget ====== */
-QTabWidget::pane {
-    border: 1px solid #404058;
-    background: #28283C;
-    top: -1px;
-}
-
-QTabBar::tab {
-    background: #1E1E2E;
-    color: #909090;
-    padding: 6px 16px;
-    border: 1px solid #404058;
-    border-bottom: none;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-}
-
-QTabBar::tab:selected {
-    background: #28283C;
-    color: #3DB39E;
-    border-color: #404058;
-}
-
-QTabBar::tab:hover:!selected {
-    color: #B0B0B0;
-    background: #222236;
-}
-
 /* ====== QListWidget ====== */
 QListWidget {
     background-color: #28283C;
@@ -218,23 +190,24 @@ QLineEdit:hover {
 /* ====== QCheckBox ====== */
 QCheckBox {
     color: #D4D4D4;
+    spacing: 6px;
 }
 
 QCheckBox::indicator {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #505068;
-    border-radius: 3px;
-    background-color: #28283C;
+    width: 16px;
+    height: 16px;
+}
+
+QCheckBox::indicator:unchecked {
+    image: url(:/checkbox_unchecked.png);
 }
 
 QCheckBox::indicator:checked {
-    background-color: #3DB39E;
-    border-color: #3DB39E;
+    image: url(:/checkbox_checked.png);
 }
 
 QCheckBox::indicator:hover {
-    border-color: #3DB39E;
+    /* 图片自带 hover 效果则留空 */
 }
 
 /* ====== QListView ====== */
