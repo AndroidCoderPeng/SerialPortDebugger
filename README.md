@@ -143,18 +143,18 @@ SerialPortDebugger/
 ├── main.cpp                     # 程序入口，高 DPI 适配
 ├── DebuggerApplication.*        # 自定义 QApplication，加载字体、样式表
 ├── MainWindow.* / .ui           # 主窗口，核心 UI 交互逻辑
-├── SerialPortManager.*          # 串口管理器（单例，独立线程）
+├── SerialPortManager.*          # 串口管理器（单例 + Facade，独立线程）
 ├── SerialPortObserver.*         # 串口观察者（遗留/备用组件）
 ├── DatabaseWrapper.*            # 数据库封装（单例，SQLite CRUD）
 ├── TaskExecutor.*               # 脚本任务执行器（QTimer 异步顺序执行）
 ├── CommandItemWidget.*          # 自定义指令列表项组件
 ├── SaveCommandDialog.* / .ui    # 添加/编辑指令对话框
 ├── CommandScriptDialog.* / .ui  # 指令脚本配置对话框（支持拖拽排序）
-├── Utils.*                      # 工具类（HEX 转换、CRC-8/CRC-16/XOR/Checksum 校验码计算）
-├── Logger.*                     # 日志系统（带 ANSI 颜色码、边框样式）
+├── Utils.*                      # 工具类（HEX 转换、CRC-8/CRC-16/XOR/Checksum）
+├── Logger.*                     # 日志系统（ANSI 颜色码、边框样式）
 ├── GlobalDefinition.hpp         # 全局数据结构定义
 ├── style.qss                    # 亮色主题 QSS 样式表
-├── style_dark.qss               # 暗色主题 QSS 样式表（teal 主色调）
+├── style_dark.qss               # 暗色主题 QSS 样式表
 ├── image.qrc                    # 图片资源
 ├── font.qrc                     # 字体资源（微软雅黑）
 ├── style.qrc                    # 样式资源
@@ -188,9 +188,21 @@ main.cpp
 **设计模式**：
 
 - **SerialPortManager**：单例 + Facade 模式，Worker 运行在独立 QThread，UI 通过 `QMetaObject::invokeMethod` 跨线程安全调用
-- **DatabaseWrapper**：单例模式，封装 SQLite CRUD
+- **DatabaseWrapper**：单例模式，封装 SQLite CRUD 操作
 - **TaskExecutor**：基于 QTimer 的异步顺序任务执行器
 - **Utils / Logger**：纯静态工具类
+
+### 📦 数据结构
+
+项目中定义了以下核心数据结构（`GlobalDefinition.hpp`）：
+
+| 结构体               | 用途                           |
+|:------------------|:-----------------------------|
+| `DefaultCommand`  | 指令值 + 备注                     |
+| `DatabaseCommand` | 继承 DefaultCommand，增加数据库主键 ID |
+| `Task`            | 指令内容 + 发送间隔（毫秒）              |
+| `ScriptConfig`    | 指令 + 备注 + 发送间隔，用于脚本配置对话框     |
+| `PortMessage`     | 串口消息：数据、方向、时间戳、格式化时间         |
 
 ## 🔧 构建说明
 
@@ -240,4 +252,4 @@ mingw32-make    # Windows (MinGW)
 
 ## 📄 许可证
 
-本项目基于 MIT 许可证开源，详见 [LICENSE](LICENSE)。
+本项目基于 GNU General Public License v3.0 开源，详见 [LICENSE](LICENSE)。
