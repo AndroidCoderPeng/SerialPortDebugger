@@ -1,6 +1,6 @@
 /* ============================================
    SerialPortDebugger — 亮色主题
-   主色调: #3DB39E (teal accent)
+   主色调: #007AFF (blue accent)
    ============================================ */
 
 /* ====== 全局背景 ====== */
@@ -39,11 +39,11 @@ QComboBox::down-arrow {
 }
 
 QComboBox:hover {
-    border-color: #3DB39E;
+    border-color: #007AFF;
 }
 
 QComboBox::drop-down:hover {
-    border-color: #3DB39E;
+    border-color: #007AFF;
 }
 
 QComboBox::down-arrow:hover {
@@ -51,7 +51,7 @@ QComboBox::down-arrow:hover {
 }
 
 QComboBox QAbstractItemView {
-    border: 1px solid #3DB39E;
+    border: 1px solid #007AFF;
     background: #FFFFFF;
     color: #333333;
     selection-color: #FFFFFF;
@@ -59,12 +59,13 @@ QComboBox QAbstractItemView {
 }
 
 QComboBox QAbstractItemView::item:selected {
-    background-color: #3DB39E;
+    background-color: #007AFF;
     color: #FFFFFF;
 }
 
 QComboBox QAbstractItemView::item:hover {
-    background-color: rgba(61, 179, 158, 0.15);
+    background-color: rgba(0, 122, 255, 0.18);
+    color: #333333;
 }
 
 QComboBox:disabled {
@@ -76,7 +77,7 @@ QComboBox:disabled {
 /* ====== QPushButton ====== */
 QPushButton {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                 stop:0 #3DB39E, stop:1 #2D9A87);
+                                 stop:0 #007AFF, stop:1 #0060DB);
     color: #FFFFFF;
     border: none;
     padding: 5px 10px;
@@ -85,12 +86,12 @@ QPushButton {
 
 QPushButton:hover {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                 stop:0 #45CCB0, stop:1 #34AD98);
+                                 stop:0 #0070EA, stop:1 #0056CC);
 }
 
 QPushButton:pressed {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                 stop:0 #2D9A87, stop:1 #228873);
+                                 stop:0 #0060DB, stop:1 #004AAD);
 }
 
 QPushButton:disabled {
@@ -110,7 +111,7 @@ QPushButton#cancelButton {
 QPushButton#cancelButton:hover {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                  stop:0 #FAFAFA, stop:1 #E8E8ED);
-    border-color: #3DB39E;
+    border-color: #007AFF;
 }
 
 /* ====== QListWidget ====== */
@@ -121,11 +122,11 @@ QListWidget {
 }
 
 QListWidget::item:hover {
-    background-color: rgba(61, 179, 158, 0.1);
+    background-color: rgba(0, 122, 255, 0.06);
 }
 
 QListWidget::item:selected {
-    background-color: rgba(61, 179, 158, 0.22);
+    background-color: rgba(0, 122, 255, 0.15);
     color: #333333;
 }
 
@@ -147,7 +148,7 @@ QListWidget#horizontalListWidget::item {
 }
 
 QListWidget#horizontalListWidget::item:selected {
-    background-color: #3DB39E;
+    background-color: #007AFF;
     color: #FFFFFF;
 }
 
@@ -159,7 +160,7 @@ QPlainTextEdit {
 }
 
 QPlainTextEdit:hover {
-    border: 1px solid #3DB39E;
+    border: 1px solid #007AFF;
 }
 
 /* ====== QTextEdit ====== */
@@ -171,7 +172,7 @@ QTextEdit {
 }
 
 QTextEdit:hover {
-    border: 1px solid #3DB39E;
+    border: 1px solid #007AFF;
 }
 
 /* ====== QLineEdit ====== */
@@ -184,7 +185,7 @@ QLineEdit {
 }
 
 QLineEdit:hover {
-    border: 1px solid #3DB39E;
+    border: 1px solid #007AFF;
 }
 
 /* ====== QCheckBox ====== */
@@ -224,11 +225,11 @@ QListView::item {
 }
 
 QListView::item:hover {
-    background-color: rgba(61, 179, 158, 0.1);
+    background-color: rgba(0, 122, 255, 0.06);
 }
 
 QListView::item:selected {
-    background-color: rgba(61, 179, 158, 0.22);
+    background-color: rgba(0, 122, 255, 0.15);
     color: #333333;
 }
 
@@ -246,7 +247,7 @@ QMenu::item {
 }
 
 QMenu::item:selected {
-    background-color: rgba(61, 179, 158, 0.22);
+    background-color: rgba(0, 122, 255, 0.15);
     color: #333333;
 }
 
@@ -279,7 +280,7 @@ QScrollBar::handle:vertical {
 }
 
 QScrollBar::handle:vertical:hover {
-    background: #3DB39E;
+    background: #007AFF;
 }
 
 QScrollBar::add-line:vertical,
@@ -306,7 +307,7 @@ QScrollBar::handle:horizontal {
 }
 
 QScrollBar::handle:horizontal:hover {
-    background: #3DB39E;
+    background: #007AFF;
 }
 
 QScrollBar::add-line:horizontal,
