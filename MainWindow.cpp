@@ -121,6 +121,16 @@ MainWindow::MainWindow(QMainWindow *parent)
   connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
 
   // 视图菜单
+  connect(ui->actionStayOnTop, &QAction::toggled, this, [this](bool on) {
+    Qt::WindowFlags flags = windowFlags();
+    if (on) {
+      setWindowFlags(flags | Qt::WindowStaysOnTopHint);
+    } else {
+      setWindowFlags(flags & ~Qt::WindowStaysOnTopHint);
+    }
+    // 改完 flag 必须 show() 一下
+    show();
+  });
   connect(ui->actionDarkTheme, &QAction::toggled, this,
           &MainWindow::onActionDarkThemeToggled);
   connect(ui->actionAutoScroll, &QAction::toggled, this,
