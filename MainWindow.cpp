@@ -343,7 +343,7 @@ void MainWindow::onActionProjectSiteTriggered() {
 
 void MainWindow::onActionAboutTriggered() {
   QMessageBox::about(this, "关于串口调试助手",
-                     "<h2>串口调试助手 v2.0.0.0</h2>"
+                     "<h2>串口调试助手 v2.0.0</h2>"
                      "<p>基于 Qt 5 的跨平台串口通信调试工具</p>"
                      "<hr>"
                      "<p><b>作者：</b>AndroidCoderPeng</p>"
