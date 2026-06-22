@@ -122,64 +122,18 @@ MainWindow::MainWindow(QMainWindow *parent)
   connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
 
   // 编辑菜单
-  connect(ui->actionFind, &QAction::triggered, this, [this] {
-    bool ok;
-    QString text = QInputDialog::getText(
-        this, "查找", "输入查找关键字:", QLineEdit::Normal, "", &ok);
-    if (!ok || text.isEmpty())
-      return;
-
-    QList<QTextEdit::ExtraSelection> extraSelections;
-    QTextDocument *doc = ui->messageView->document();
-    QTextCursor cursor(doc);
-    QTextCharFormat highlightFormat;
-    highlightFormat.setBackground(QColor(0xFF, 0xFF, 0x00, 0x60)); // 半透明黄色
-
-    int matchCount = 0;
-    while (true) {
-      cursor = doc->find(text, cursor);
-      if (cursor.isNull())
-        break;
-
-      QTextEdit::ExtraSelection sel;
-      sel.format = highlightFormat;
-      sel.cursor = cursor;
-      extraSelections.append(sel);
-      matchCount++;
-    }
-
-    if (matchCount == 0) {
-      ui->messageView->setExtraSelections({}); // 清除旧高亮
-      QMessageBox::information(this, "查找", "未找到 \"" + text + "\"");
-      return;
-    }
-
-    ui->messageView->setExtraSelections(extraSelections);
-
-    // 跳到第一个匹配 —— 保存当前滚动位置，跳完再滚到顶
-    QTextCursor firstCursor(doc);
-    firstCursor = doc->find(text, firstCursor);
-    if (!firstCursor.isNull()) {
-      ui->messageView->setTextCursor(firstCursor);
-      ui->messageView->ensureCursorVisible();
-    }
-  });
+  connect(ui->actionCommandScript, &QAction::triggered, this,
+          &MainWindow::onActionCommandScriptClicked);
+  connect(ui->actionFind, &QAction::triggered, this,
+          &MainWindow::onActionSearchClicked);
   connect(ui->actionClearHighlight, &QAction::triggered, this,
           [this] { ui->messageView->setExtraSelections({}); });
   connect(ui->actionCopy, &QAction::triggered, this,
           [this] { ui->messageView->copy(); });
 
   // 视图菜单
-  connect(ui->actionStayOnTop, &QAction::toggled, this, [this](bool on) {
-    Qt::WindowFlags flags = windowFlags();
-    if (on) {
-      setWindowFlags(flags | Qt::WindowStaysOnTopHint);
-    } else {
-      setWindowFlags(flags & ~Qt::WindowStaysOnTopHint);
-    }
-    // 改完 flag 必须 show() 一下
-    show();
-  });
+  connect(ui->actionStayOnTop, &QAction::toggled, this,
+          &MainWindow::onActionTopmostToggled);
   connect(ui->actionDarkTheme, &QAction::toggled, this,
           &MainWindow::onActionDarkThemeToggled);
   connect(ui->actionAutoScroll, &QAction::toggled, this,
@@ -206,8 +160,6 @@ MainWindow::MainWindow(QMainWindow *parent)
           &MainWindow::onSendCommandButtonClicked);
   connect(ui->historyListWidget, &QListWidget::itemClicked, this,
           &MainWindow::onHistoryItemClicked);
-  connect(ui->scriptButton, &QPushButton::clicked, this,
-          &MainWindow::onScriptButtonClicked);
   connect(ui->timeCheckBox, &QCheckBox::stateChanged, this,
           &MainWindow::onTimeCheckBoxStateChanged);
   connect(ui->hexSendCheckBox, &QCheckBox::stateChanged, this,
@@ -268,6 +220,94 @@ void MainWindow::onActionClearDataClicked() {
   txBytes = 0;
   rxBytes = 0;
   updateTxRxBytes();
+}
+
+void MainWindow::onActionCommandScriptClicked() {
+  if (!SerialPortManager::get()->isOpen()) {
+    QMessageBox::warning(this, "警告", "请先打开串口！");
+    return;
+  }
+
+  if (executorPtr && executorPtr->isRunning()) {
+    QMessageBox::information(this, "提示",
+                             "脚本正在执行，请先等待当前脚本完成");
+    return;
+  }
+
+  const auto commands = DatabaseWrapper::get()->getAllCommands();
+  if (commands.count() <= 1) {
+    QMessageBox::information(this, "提示", "指令数量至少大于2");
+    return;
+  }
+
+  CommandScriptDialog dialog(this, commands);
+  if (dialog.exec() == QDialog::Accepted) {
+    // 获取脚本参数，然后按照脚本执行命令
+    const auto configs = dialog.getScriptConfigs();
+    QList<Task> tasks;
+    for (const ScriptConfig &config : configs) {
+      Task task;
+      task.command = config.command;
+      task.interval = config.interval;
+      tasks.append(task);
+    }
+    executorPtr->setTasks(tasks);
+    executorPtr->start();
+  }
+}
+
+void MainWindow::onActionSearchClicked() {
+  bool ok;
+  QString text = QInputDialog::getText(
+      this, "查找", "输入查找关键字:", QLineEdit::Normal, "", &ok);
+  if (!ok || text.isEmpty())
+    return;
+
+  QList<QTextEdit::ExtraSelection> extraSelections;
+  QTextDocument *doc = ui->messageView->document();
+  QTextCursor cursor(doc);
+  QTextCharFormat highlightFormat;
+  highlightFormat.setBackground(QColor(0xFF, 0xFF, 0x00, 0x60)); // 半透明黄色
+
+  int matchCount = 0;
+  while (true) {
+    cursor = doc->find(text, cursor);
+    if (cursor.isNull())
+      break;
+
+    QTextEdit::ExtraSelection sel;
+    sel.format = highlightFormat;
+    sel.cursor = cursor;
+    extraSelections.append(sel);
+    matchCount++;
+  }
+
+  if (matchCount == 0) {
+    ui->messageView->setExtraSelections({}); // 清除旧高亮
+    QMessageBox::information(this, "查找", "未找到 \"" + text + "\"");
+    return;
+  }
+
+  ui->messageView->setExtraSelections(extraSelections);
+
+  // 跳到第一个匹配 —— 保存当前滚动位置，跳完再滚到顶
+  QTextCursor firstCursor(doc);
+  firstCursor = doc->find(text, firstCursor);
+  if (!firstCursor.isNull()) {
+    ui->messageView->setTextCursor(firstCursor);
+    ui->messageView->ensureCursorVisible();
+  }
+}
+
+void MainWindow::onActionTopmostToggled(bool checked) {
+  Qt::WindowFlags flags = windowFlags();
+  if (checked) {
+    setWindowFlags(flags | Qt::WindowStaysOnTopHint);
+  } else {
+    setWindowFlags(flags & ~Qt::WindowStaysOnTopHint);
+  }
+  // 改完 flag 必须 show() 一下
+  show();
 }
 
 void MainWindow::onActionDarkThemeToggled(bool checked) {
@@ -656,40 +696,6 @@ void MainWindow::onHistoryItemClicked(QListWidgetItem *item) {
   }
 
   ui->userInputView->setText(itemWidget->command());
-}
-
-void MainWindow::onScriptButtonClicked() {
-  if (!SerialPortManager::get()->isOpen()) {
-    QMessageBox::warning(this, "警告", "请先打开串口！");
-    return;
-  }
-
-  if (executorPtr && executorPtr->isRunning()) {
-    QMessageBox::information(this, "提示",
-                             "脚本正在执行，请先等待当前脚本完成");
-    return;
-  }
-
-  const auto commands = DatabaseWrapper::get()->getAllCommands();
-  if (commands.count() <= 1) {
-    QMessageBox::information(this, "提示", "指令数量至少大于2");
-    return;
-  }
-
-  CommandScriptDialog dialog(this, commands);
-  if (dialog.exec() == QDialog::Accepted) {
-    // 获取脚本参数，然后按照脚本执行命令
-    const auto configs = dialog.getScriptConfigs();
-    QList<Task> tasks;
-    for (const ScriptConfig &config : configs) {
-      Task task;
-      task.command = config.command;
-      task.interval = config.interval;
-      tasks.append(task);
-    }
-    executorPtr->setTasks(tasks);
-    executorPtr->start();
-  }
 }
 
 void MainWindow::onTimeCheckBoxStateChanged(const qint16 &state) {

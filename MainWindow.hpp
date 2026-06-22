@@ -46,6 +46,12 @@ private:
 
   void onActionClearDataClicked();
 
+  void onActionCommandScriptClicked();
+
+  void onActionSearchClicked();
+
+  void onActionTopmostToggled(bool checked);
+
   void onActionDarkThemeToggled(bool checked);
 
   void onActionAutoScrollToggled(bool checked);
@@ -85,8 +91,6 @@ private:
   void updateHistoryListWidget(const QString &command);
 
   void onHistoryItemClicked(QListWidgetItem *item);
-
-  void onScriptButtonClicked();
 
   void onTimeCheckBoxStateChanged(const qint16 &state);
 

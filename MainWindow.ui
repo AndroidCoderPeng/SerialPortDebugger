@@ -33,10 +33,10 @@
                 <property name="title">
                     <string>编辑(&amp;E)</string>
                 </property>
+                <addaction name="actionCommandScript"/>
+                <addaction name="separator"/>
                 <addaction name="actionFind"/>
-                <addaction name="separator"/>
                 <addaction name="actionClearHighlight"/>
-                <addaction name="separator"/>
                 <addaction name="actionCopy"/>
             </widget>
             <widget class="QMenu" name="menuView">
@@ -47,7 +47,6 @@
                 <addaction name="separator"/>
                 <addaction name="actionDarkTheme"/>
                 <addaction name="actionAutoScroll"/>
-                <addaction name="separator"/>
                 <addaction name="actionHexDisplay"/>
             </widget>
             <widget class="QMenu" name="menuHelp">
@@ -235,13 +234,6 @@
                                     <number>8</number>
                                 </property>
                                 <item>
-                                    <widget class="QPushButton" name="scriptButton">
-                                        <property name="text">
-                                            <string>指令脚本</string>
-                                        </property>
-                                    </widget>
-                                </item>
-                                <item>
                                     <widget class="QCheckBox" name="hexSendCheckBox">
                                         <property name="text">
                                             <string>HEX发送</string>
@@ -413,6 +405,11 @@
             </property>
             <property name="shortcut">
                 <string>Ctrl+Q</string>
+            </property>
+        </action>
+        <action name="actionCommandScript">
+            <property name="text">
+                <string>指令脚本</string>
             </property>
         </action>
         <action name="actionFind">
