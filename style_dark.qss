@@ -113,6 +113,26 @@ QPushButton#cancelButton:hover {
     border-color: #3DB39E;
 }
 
+/* ====== QTabWidget ====== */
+QTabWidget::pane {
+    border: 1px solid #404058;
+}
+
+QTabBar::tab {
+    background-color: #28283C;
+    color: #909090;
+    padding: 4px 12px;
+}
+
+QTabBar::tab:selected {
+    color: #D4D4D4;
+    background-color: #242436;
+}
+
+QTabBar::tab:hover:!selected {
+    color: #B0B0B0;
+}
+
 /* ====== QListWidget ====== */
 QListWidget {
     background-color: #28283C;
