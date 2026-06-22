@@ -10,6 +10,47 @@
                 <height>600</height>
             </rect>
         </property>
+        <!-- ====== 菜单栏 ====== -->
+        <widget class="QMenuBar" name="menuBar">
+            <property name="geometry">
+                <rect>
+                    <x>0</x>
+                    <y>0</y>
+                    <width>800</width>
+                    <height>22</height>
+                </rect>
+            </property>
+            <widget class="QMenu" name="menuFile">
+                <property name="title">
+                    <string>文件(&amp;F)</string>
+                </property>
+                <addaction name="actionSaveLog"/>
+                <addaction name="actionClearData"/>
+                <addaction name="separator"/>
+                <addaction name="actionExit"/>
+            </widget>
+            <widget class="QMenu" name="menuView">
+                <property name="title">
+                    <string>视图(&amp;V)</string>
+                </property>
+                <addaction name="actionDarkTheme"/>
+                <addaction name="actionAutoScroll"/>
+                <addaction name="separator"/>
+                <addaction name="actionHexDisplay"/>
+            </widget>
+            <widget class="QMenu" name="menuHelp">
+                <property name="title">
+                    <string>帮助(&amp;H)</string>
+                </property>
+                <addaction name="actionProjectSite"/>
+                <addaction name="actionAbout"/>
+            </widget>
+            <addaction name="menuFile"/>
+            <addaction name="menuView"/>
+            <addaction name="menuHelp"/>
+        </widget>
+
+        <!-- ====== 主界面 ====== -->
         <widget class="QWidget" name="centralWidget">
             <layout class="QHBoxLayout" name="rootLayout" stretch="0,1">
                 <property name="spacing">
@@ -100,21 +141,7 @@
                                 </property>
                             </widget>
                         </item>
-                        <item row="6" column="0" colspan="2">
-                            <widget class="QPushButton" name="saveDataButton">
-                                <property name="text">
-                                    <string>保存数据</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item row="6" column="2" colspan="3">
-                            <widget class="QPushButton" name="clearDataButton">
-                                <property name="text">
-                                    <string>清空数据</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item row="7" column="0" rowspan="2" colspan="5">
+                        <item row="6" column="0" rowspan="2" colspan="5">
                             <widget class="QTabWidget" name="tabWidget">
                                 <property name="currentIndex">
                                     <number>0</number>
@@ -198,16 +225,6 @@
                                     <widget class="QPushButton" name="scriptButton">
                                         <property name="text">
                                             <string>指令脚本</string>
-                                        </property>
-                                    </widget>
-                                </item>
-                                <item>
-                                    <widget class="QCheckBox" name="hexReceiveCheckBox">
-                                        <property name="text">
-                                            <string>HEX显示</string>
-                                        </property>
-                                        <property name="checked">
-                                            <bool>true</bool>
                                         </property>
                                     </widget>
                                 </item>
@@ -359,6 +376,75 @@
                 </item>
             </layout>
         </widget>
+
+        <!-- ====== Actions ====== -->
+        <action name="actionSaveLog">
+            <property name="text">
+                <string>保存日志(&amp;S)</string>
+            </property>
+            <property name="shortcut">
+                <string>Ctrl+S</string>
+            </property>
+        </action>
+        <action name="actionClearData">
+            <property name="text">
+                <string>清空数据(&amp;C)</string>
+            </property>
+            <property name="shortcut">
+                <string>Ctrl+D</string>
+            </property>
+        </action>
+        <action name="actionExit">
+            <property name="text">
+                <string>退出(&amp;Q)</string>
+            </property>
+            <property name="shortcut">
+                <string>Ctrl+Q</string>
+            </property>
+        </action>
+        <action name="actionDarkTheme">
+            <property name="text">
+                <string>暗色主题</string>
+            </property>
+            <property name="checkable">
+                <bool>true</bool>
+            </property>
+        </action>
+        <action name="actionAutoScroll">
+            <property name="text">
+                <string>自动滚屏(&amp;A)</string>
+            </property>
+            <property name="checkable">
+                <bool>true</bool>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
+            </property>
+        </action>
+        <action name="actionHexDisplay">
+            <property name="text">
+                <string>HEX 显示(&amp;H)</string>
+            </property>
+            <property name="checkable">
+                <bool>true</bool>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
+            </property>
+            <property name="shortcut">
+                <string>Ctrl+H</string>
+            </property>
+        </action>
+        <action name="actionProjectSite">
+            <property name="text">
+                <string>项目主页(&amp;P)</string>
+            </property>
+        </action>
+        <action name="actionAbout">
+            <property name="text">
+                <string>关于(&amp;A)</string>
+            </property>
+        </action>
     </widget>
     <resources/>
     <connections/>

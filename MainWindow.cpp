@@ -8,15 +8,18 @@
 #include <QClipboard>
 #include <QDateTime>
 #include <QDebug>
+#include <QDesktopServices>
 #include <QFileDialog>
 #include <QMenu>
 #include <QMessageBox>
+#include <QScrollBar>
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QTimer>
+#include <QUrl>
 
 #include "CommandItemWidget.hpp"
 #include "CommandScriptDialog.hpp"
@@ -109,15 +112,33 @@ MainWindow::MainWindow(QMainWindow *parent)
   connect(executorPtr, &TaskExecutor::finished, this,
           &MainWindow::onScriptFinished);
 
+  // 菜单栏 Actions
+  // 文件菜单
+  connect(ui->actionSaveLog, &QAction::triggered, this,
+          &MainWindow::onActionSaveDataClicked);
+  connect(ui->actionClearData, &QAction::triggered, this,
+          &MainWindow::onActionClearDataClicked);
+  connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
+
+  // 视图菜单
+  connect(ui->actionDarkTheme, &QAction::toggled, this,
+          &MainWindow::onActionDarkThemeToggled);
+  connect(ui->actionAutoScroll, &QAction::toggled, this,
+          &MainWindow::onActionAutoScrollToggled);
+  connect(ui->actionHexDisplay, &QAction::toggled, this,
+          &MainWindow::onActionDecodeStateChanged);
+
+  // 帮助菜单
+  connect(ui->actionProjectSite, &QAction::triggered, this,
+          &MainWindow::onActionProjectSiteTriggered);
+  connect(ui->actionAbout, &QAction::triggered, this,
+          &MainWindow::onActionAboutTriggered);
+
   // 连接信号槽
   connect(ui->openPortButton, &QPushButton::clicked, this,
           &MainWindow::onOpenPortButtonClicked);
   connect(ui->refreshButton, &QPushButton::clicked, this,
           &MainWindow::onRefreshButtonClicked);
-  connect(ui->saveDataButton, &QPushButton::clicked, this,
-          &MainWindow::onSaveDataButtonClicked);
-  connect(ui->clearDataButton, &QPushButton::clicked, this,
-          &MainWindow::onClearDataButtonClicked);
   connect(ui->listWidget, &QListWidget::itemClicked, this,
           &MainWindow::onCommandItemClicked);
   connect(ui->listWidget, &QListWidget::customContextMenuRequested, this,
@@ -130,8 +151,6 @@ MainWindow::MainWindow(QMainWindow *parent)
           &MainWindow::onScriptButtonClicked);
   connect(ui->timeCheckBox, &QCheckBox::stateChanged, this,
           &MainWindow::onTimeCheckBoxStateChanged);
-  connect(ui->hexReceiveCheckBox, &QCheckBox::stateChanged, this,
-          &MainWindow::onDecodeCheckBoxStateChanged);
   connect(ui->hexSendCheckBox, &QCheckBox::stateChanged, this,
           &MainWindow::onEncodeCheckBoxStateChanged);
 
@@ -156,18 +175,132 @@ MainWindow::MainWindow(QMainWindow *parent)
           });
 }
 
+void MainWindow::onActionSaveDataClicked() {
+  if (history.isEmpty()) {
+    QMessageBox::warning(this, "警告", "没有数据可以保存");
+    return;
+  }
+  const QString filePath =
+      QFileDialog::getSaveFileName(this, "保存日志", "", "文本文件 (*.txt)");
+  if (filePath.isEmpty()) {
+    QMessageBox::warning(this, "警告", "未选择保存文件");
+    return;
+  }
+  QFile file(filePath);
+  if (!file.open(QIODevice::WriteOnly | QIODevice::Text |
+                 QIODevice::Truncate)) {
+    QMessageBox::critical(this, "错误", "无法打开文件：" + file.errorString());
+    return;
+  }
+  QTextStream out(&file);
+  const QList<PortMessage> &listRef = history;
+  for (const auto &msg : listRef) {
+    const QString hexData = Utils::formatByteArray(msg.data);
+    const auto line = QString("[%1]【%2】%3\n")
+                          .arg(msg.formattedTime, msg.direction, hexData);
+    out << line;
+  }
+  file.close();
+}
+
+void MainWindow::onActionClearDataClicked() {
+  ui->messageView->clear();
+  history.clear();
+  txBytes = 0;
+  rxBytes = 0;
+  updateTxRxBytes();
+}
+
+void MainWindow::onActionDarkThemeToggled(bool checked) {
+  if (checked) {
+    QFile styleFile(":/style_dark.qss");
+    if (styleFile.open(QFile::ReadOnly | QFile::Text)) {
+      qApp->setStyleSheet(styleFile.readAll());
+      styleFile.close();
+    }
+  } else {
+    QFile styleFile(":/style.qss");
+    if (styleFile.open(QFile::ReadOnly | QFile::Text)) {
+      qApp->setStyleSheet(styleFile.readAll());
+      styleFile.close();
+    }
+  }
+}
+
+void MainWindow::onActionAutoScrollToggled(bool checked) {
+  autoScrollEnabled = checked;
+}
+
+void MainWindow::onActionDecodeStateChanged(const int &state) {
+  ui->messageView->clear(); // 清空当前显示
+  const QList<PortMessage> &listRef = history;
+
+  QTextCursor cursor(ui->messageView->document());
+  cursor.movePosition(QTextCursor::End);
+
+  if (state) {
+    for (const auto &msg : listRef) {
+      // 十六进制格式数据
+      const QString hexData = Utils::formatByteArray(msg.data);
+
+      if (msg.direction == "收") {
+        QTextCharFormat format;
+        format.setForeground(Qt::darkGreen); // 接收用绿色
+        cursor.setCharFormat(format);
+      } else {
+        cursor.setCharFormat(QTextCharFormat()); // 恢复默认格式
+      }
+      cursor.insertText(QString("[%1]【%2】%3\n")
+                            .arg(msg.formattedTime, msg.direction, hexData));
+    }
+  } else {
+    for (const auto &msg : listRef) {
+      const QString decodedData = QString(msg.data);
+
+      if (msg.direction == "收") {
+        QTextCharFormat format;
+        format.setForeground(Qt::darkGreen); // 接收用绿色
+        cursor.setCharFormat(format);
+      } else {
+        cursor.setCharFormat(QTextCharFormat()); // 恢复默认格式
+      }
+      cursor.insertText(
+          QString("[%1]【%2】%3\n")
+              .arg(msg.formattedTime, msg.direction, decodedData));
+    }
+  }
+
+  if (autoScrollEnabled) {
+    ui->messageView->setTextCursor(cursor);
+    ui->messageView->ensureCursorVisible();
+  }
+}
+
+void MainWindow::onActionProjectSiteTriggered() {
+  QDesktopServices::openUrl(
+      QUrl("https://github.com/AndroidCoderPeng/SerialPortDebugger"));
+}
+
+void MainWindow::onActionAboutTriggered() {
+  QMessageBox::about(this, "关于串口调试助手",
+                     "<h2>串口调试助手 v2.0.0.0</h2>"
+                     "<p>基于 Qt 5 的跨平台串口通信调试工具</p>"
+                     "<hr>"
+                     "<p><b>作者：</b>AndroidCoderPeng</p>"
+                     "<p><b>邮箱：</b><a "
+                     "href='mailto:AndroidCoderPeng'>290677893@qq.com</a></p>"
+                     "<hr>"
+                     "<p>支持 Windows / Linux 平台</p>");
+}
+
 void MainWindow::updateCommandList() {
   ui->listWidget->clear();
   const auto commands = DatabaseWrapper::get()->getAllCommands();
-  for (int i = 0; i < commands.size(); ++i) {
-    if (i == commands.size() - 1) {
-      // 末尾固定显示"添加新指令"占位项
-      updateCommandWidget(kAddItemMagicId, "＋", "添加新指令");
-    } else {
-      const auto cmd = commands.at(i);
-      updateCommandWidget(cmd.id, cmd.value, cmd.remark);
-    }
+  for (const auto &cmd : commands) {
+    updateCommandWidget(cmd.id, cmd.value, cmd.remark);
   }
+  // 循环结束后再追加
+  updateCommandWidget(kAddItemMagicId, "＋", "添加新指令");
 }
 
 void MainWindow::updateComboxState(const bool disabled) const {
@@ -221,42 +354,6 @@ void MainWindow::onRefreshButtonClicked() {
   for (const QSerialPortInfo &port : ports) {
     ui->portNameBox->addItem(port.portName());
   }
-}
-
-void MainWindow::onSaveDataButtonClicked() {
-  if (history.isEmpty()) {
-    QMessageBox::warning(this, "警告", "没有数据可以保存");
-    return;
-  }
-  const QString filePath =
-      QFileDialog::getSaveFileName(this, "保存日志", "", "文本文件 (*.txt)");
-  if (filePath.isEmpty()) {
-    QMessageBox::warning(this, "警告", "未选择保存文件");
-    return;
-  }
-  QFile file(filePath);
-  if (!file.open(QIODevice::WriteOnly | QIODevice::Text |
-                 QIODevice::Truncate)) {
-    QMessageBox::critical(this, "错误", "无法打开文件：" + file.errorString());
-    return;
-  }
-  QTextStream out(&file);
-  const QList<PortMessage> &listRef = history;
-  for (const auto &msg : listRef) {
-    const QString hexData = Utils::formatByteArray(msg.data);
-    const auto line = QString("[%1]【%2】%3\n")
-                          .arg(msg.formattedTime, msg.direction, hexData);
-    out << line;
-  }
-  file.close();
-}
-
-void MainWindow::onClearDataButtonClicked() {
-  ui->messageView->clear();
-  history.clear();
-  txBytes = 0;
-  rxBytes = 0;
-  updateTxRxBytes();
 }
 
 void MainWindow::updateCommandWidget(const qint16 &id, const QString &command,
@@ -375,7 +472,7 @@ void MainWindow::onCustomAction(const QListWidgetItem *item,
     }
   } else if (message == "3") {
     DatabaseWrapper::get()->deleteCommand(id);
-    delete ui->listWidget->takeItem(ui->listWidget->row(listItem));
+    updateCommandList();
   }
 }
 
@@ -433,7 +530,7 @@ void MainWindow::updatePortMessageLog(const QByteArray &data,
   history.append(msg);
 
   QString dataStr;
-  if (ui->hexReceiveCheckBox->isChecked()) {
+  if (hexReceiveEnabled) {
     dataStr = Utils::formatByteArray(data);
   } else {
     dataStr = QString(data);
@@ -453,8 +550,16 @@ void MainWindow::updatePortMessageLog(const QByteArray &data,
         QString("[ %1 ]发→◇%2\n").arg(msg.formattedTime, dataStr));
   }
 
-  ui->messageView->setTextCursor(cursor);
-  ui->messageView->ensureCursorVisible(); // 自动滚到底部
+  if (autoScrollEnabled) {
+    ui->messageView->setTextCursor(cursor);
+    ui->messageView->ensureCursorVisible();
+  } else {
+    // 插入文本但不改变滚动位置
+    QScrollBar *vbar = ui->messageView->verticalScrollBar();
+    const int savedPos = vbar->value();
+    ui->messageView->setTextCursor(cursor);
+    vbar->setValue(savedPos);
+  }
 }
 
 void MainWindow::updateHistoryListWidget(const QString &command) {
@@ -562,50 +667,6 @@ void MainWindow::uncheckTimeCheckBox() {
   ui->timeCheckBox->blockSignals(true);
   ui->timeCheckBox->setCheckState(Qt::Unchecked);
   ui->timeCheckBox->blockSignals(false);
-}
-
-void MainWindow::onDecodeCheckBoxStateChanged(const qint16 &state) {
-  ui->messageView->clear(); // 清空当前显示
-  const QList<PortMessage> &listRef = history;
-  if (state == Qt::Checked) {
-    for (const auto &msg : listRef) {
-      // 十六进制格式数据
-      const QString hexData = Utils::formatByteArray(msg.data);
-
-      QTextCursor cursor(ui->messageView->document());
-      cursor.movePosition(QTextCursor::End);
-
-      if (msg.direction == "收") {
-        QTextCharFormat format;
-        format.setForeground(Qt::darkGreen); // 接收用绿色
-        cursor.setCharFormat(format);
-      } else {
-        cursor.setCharFormat(QTextCharFormat()); // 恢复默认格式
-      }
-      cursor.insertText(QString("[%1]【%2】%3\n")
-                            .arg(msg.formattedTime, msg.direction, hexData));
-    }
-  } else {
-    for (const auto &msg : listRef) {
-      const QString decodedData = QString(msg.data);
-
-      QTextCursor cursor(ui->messageView->document());
-      cursor.movePosition(QTextCursor::End);
-
-      if (msg.direction == "收") {
-        QTextCharFormat format;
-        format.setForeground(Qt::darkGreen); // 接收用绿色
-        cursor.setCharFormat(format);
-      } else {
-        cursor.setCharFormat(QTextCharFormat()); // 恢复默认格式
-      }
-      cursor.insertText(
-          QString("[%1]【%2】%3\n")
-              .arg(msg.formattedTime, msg.direction, decodedData));
-    }
-  }
-
-  ui->messageView->ensureCursorVisible(); // 自动滚到底部
 }
 
 void MainWindow::onEncodeCheckBoxStateChanged(const qint16 &state) {
