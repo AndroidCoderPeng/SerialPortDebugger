@@ -4,7 +4,7 @@ win32 {
     RC_ICONS = application.ico
 }
 
-QT       += core gui widgets serialport sql
+QT     += core gui widgets serialport sql
 
 CONFIG += c++11
 
@@ -48,6 +48,7 @@ RESOURCES += \
 
 DISTFILES += \
     screenshots/linux_amd.png \
+    screenshots/windows_7.png \
     screenshots/windows_10.png \
     screenshots/windows_11.png \
     README.md
