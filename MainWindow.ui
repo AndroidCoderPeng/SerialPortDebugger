@@ -29,6 +29,16 @@
                 <addaction name="separator"/>
                 <addaction name="actionExit"/>
             </widget>
+            <widget class="QMenu" name="menuEdit">
+                <property name="title">
+                    <string>编辑(&amp;E)</string>
+                </property>
+                <addaction name="actionFind"/>
+                <addaction name="separator"/>
+                <addaction name="actionClearHighlight"/>
+                <addaction name="separator"/>
+                <addaction name="actionCopy"/>
+            </widget>
             <widget class="QMenu" name="menuView">
                 <property name="title">
                     <string>视图(&amp;V)</string>
@@ -48,6 +58,7 @@
                 <addaction name="actionAbout"/>
             </widget>
             <addaction name="menuFile"/>
+            <addaction name="menuEdit"/>
             <addaction name="menuView"/>
             <addaction name="menuHelp"/>
         </widget>
@@ -402,6 +413,27 @@
             </property>
             <property name="shortcut">
                 <string>Ctrl+Q</string>
+            </property>
+        </action>
+        <action name="actionFind">
+            <property name="text">
+                <string>查找(&amp;F)</string>
+            </property>
+            <property name="shortcut">
+                <string>Ctrl+F</string>
+            </property>
+        </action>
+        <action name="actionClearHighlight">
+            <property name="text">
+                <string>清除高亮</string>
+            </property>
+        </action>
+        <action name="actionCopy">
+            <property name="text">
+                <string>复制选中(&amp;C)</string>
+            </property>
+            <property name="shortcut">
+                <string>Ctrl+C</string>
             </property>
         </action>
         <action name="actionStayOnTop">

@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QDesktopServices>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QMenu>
 #include <QMessageBox>
 #include <QScrollBar>
@@ -119,6 +120,54 @@ MainWindow::MainWindow(QMainWindow *parent)
   connect(ui->actionClearData, &QAction::triggered, this,
           &MainWindow::onActionClearDataClicked);
   connect(ui->actionExit, &QAction::triggered, this, &QWidget::close);
+
+  // 编辑菜单
+  connect(ui->actionFind, &QAction::triggered, this, [this] {
+    bool ok;
+    QString text = QInputDialog::getText(
+        this, "查找", "输入查找关键字:", QLineEdit::Normal, "", &ok);
+    if (!ok || text.isEmpty())
+      return;
+
+    QList<QTextEdit::ExtraSelection> extraSelections;
+    QTextDocument *doc = ui->messageView->document();
+    QTextCursor cursor(doc);
+    QTextCharFormat highlightFormat;
+    highlightFormat.setBackground(QColor(0xFF, 0xFF, 0x00, 0x60)); // 半透明黄色
+
+    int matchCount = 0;
+    while (true) {
+      cursor = doc->find(text, cursor);
+      if (cursor.isNull())
+        break;
+
+      QTextEdit::ExtraSelection sel;
+      sel.format = highlightFormat;
+      sel.cursor = cursor;
+      extraSelections.append(sel);
+      matchCount++;
+    }
+
+    if (matchCount == 0) {
+      ui->messageView->setExtraSelections({}); // 清除旧高亮
+      QMessageBox::information(this, "查找", "未找到 \"" + text + "\"");
+      return;
+    }
+
+    ui->messageView->setExtraSelections(extraSelections);
+
+    // 跳到第一个匹配 —— 保存当前滚动位置，跳完再滚到顶
+    QTextCursor firstCursor(doc);
+    firstCursor = doc->find(text, firstCursor);
+    if (!firstCursor.isNull()) {
+      ui->messageView->setTextCursor(firstCursor);
+      ui->messageView->ensureCursorVisible();
+    }
+  });
+  connect(ui->actionClearHighlight, &QAction::triggered, this,
+          [this] { ui->messageView->setExtraSelections({}); });
+  connect(ui->actionCopy, &QAction::triggered, this,
+          [this] { ui->messageView->copy(); });
 
   // 视图菜单
   connect(ui->actionStayOnTop, &QAction::toggled, this, [this](bool on) {
@@ -242,6 +291,7 @@ void MainWindow::onActionAutoScrollToggled(bool checked) {
 }
 
 void MainWindow::onActionDecodeStateChanged(const int &state) {
+  hexReceiveEnabled = state;
   ui->messageView->clear(); // 清空当前显示
   const QList<PortMessage> &listRef = history;
 
