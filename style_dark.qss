@@ -253,30 +253,6 @@ QListView::item:selected {
     color: #FFFFFF;
 }
 
-/* ====== QMenu ====== */
-QMenu {
-    background-color: #28283C;
-    color: #D4D4D4;
-    border: 1px solid #404058;
-    padding: 4px;
-}
-
-QMenu::item {
-    padding: 6px 24px;
-    border-radius: 3px;
-}
-
-QMenu::item:selected {
-    background-color: rgba(0, 122, 255, 0.18);
-    color: #FFFFFF;
-}
-
-QMenu::separator {
-    height: 1px;
-    background: #404058;
-    margin: 4px 8px;
-}
-
 /* ====== QMessageBox / QDialog ====== */
 QMessageBox {
     background-color: #28283C;
