@@ -50,17 +50,21 @@ private:
 
   void onActionSearchClicked();
 
+  void onActionClearHighlightClicked();
+
+  void onActionCopyClicked();
+
   void onActionTopmostToggled(bool checked);
 
   void onActionDarkThemeToggled(bool checked);
 
   void onActionAutoScrollToggled(bool checked);
+  
+  void onActionDecodeStateChanged(const int &state);
 
   void onActionProjectSiteTriggered();
 
   void onActionAboutTriggered();
-
-  void onActionDecodeStateChanged(const int &state);
 
   // ==== 普通操作 ======
   void updateCommandList();
@@ -98,6 +102,14 @@ private:
 
   // 编码发送
   void onEncodeCheckBoxStateChanged(const qint16 &state);
+
+  void onPortDataReceived(const QByteArray &data);
+
+  void onPortStateChanged(bool opened);
+
+  void onPortErrorOccurred(const QString &msg);
+
+  void onTimerTimeout();
 
   QByteArray appendCheckCode(const QByteArray &command,
                              const int &checkCodeType);

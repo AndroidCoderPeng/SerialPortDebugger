@@ -127,9 +127,9 @@ MainWindow::MainWindow(QMainWindow *parent)
   connect(ui->actionFind, &QAction::triggered, this,
           &MainWindow::onActionSearchClicked);
   connect(ui->actionClearHighlight, &QAction::triggered, this,
-          [this] { ui->messageView->setExtraSelections({}); });
+          &MainWindow::onActionClearHighlightClicked);
   connect(ui->actionCopy, &QAction::triggered, this,
-          [this] { ui->messageView->copy(); });
+          &MainWindow::onActionCopyClicked);
 
   // 视图菜单
   connect(ui->actionStayOnTop, &QAction::toggled, this,
@@ -168,22 +168,11 @@ MainWindow::MainWindow(QMainWindow *parent)
   // ========== 一次性连接 SerialPortManager 的所有信号 ==========
   SerialPortManager *mgr = SerialPortManager::get();
   connect(mgr, &SerialPortManager::dataReceivedSignal, this,
-          [this](const QByteArray &data) { updatePortMessageLog(data, "收"); });
+          &MainWindow::onPortDataReceived);
   connect(mgr, &SerialPortManager::stateChangedSignal, this,
-          [this](bool opened) {
-            ui->openPortButton->setText(opened ? "关闭串口" : "打开串口");
-            updateComboxState(opened);
-            if (!opened) {
-              uncheckTimeCheckBox();
-              if (timerPtr && timerPtr->isActive()) {
-                timerPtr->stop();
-              }
-            }
-          });
+          &MainWindow::onPortStateChanged);
   connect(mgr, &SerialPortManager::errorOccurredSignal, this,
-          [this](const QString &msg) {
-            QMessageBox::critical(this, "串口错误", msg);
-          });
+          &MainWindow::onPortErrorOccurred);
 }
 
 void MainWindow::onActionSaveDataClicked() {
@@ -298,6 +287,12 @@ void MainWindow::onActionSearchClicked() {
     ui->messageView->ensureCursorVisible();
   }
 }
+
+void MainWindow::onActionClearHighlightClicked() {
+  ui->messageView->setExtraSelections({});
+}
+
+void MainWindow::onActionCopyClicked() { ui->messageView->copy(); }
 
 void MainWindow::onActionTopmostToggled(bool checked) {
   Qt::WindowFlags flags = windowFlags();
@@ -714,10 +709,7 @@ void MainWindow::onTimeCheckBoxStateChanged(const qint16 &state) {
 
     if (!timerPtr) {
       timerPtr = new QTimer(this);
-      connect(timerPtr, &QTimer::timeout, this, [this] {
-        const auto command = ui->userInputView->toPlainText();
-        sendCommand(command);
-      });
+      connect(timerPtr, &QTimer::timeout, this, &MainWindow::onTimerTimeout);
     }
     timerPtr->start(time.toInt());
   } else if (state == Qt::Unchecked) {
@@ -741,6 +733,30 @@ void MainWindow::onEncodeCheckBoxStateChanged(const qint16 &state) {
   } else {
     ui->checkCodeBox->setDisabled(true);
   }
+}
+
+void MainWindow::onPortDataReceived(const QByteArray &data) {
+  updatePortMessageLog(data, "收");
+}
+
+void MainWindow::onPortStateChanged(bool opened) {
+  ui->openPortButton->setText(opened ? "关闭串口" : "打开串口");
+  updateComboxState(opened);
+  if (!opened) {
+    uncheckTimeCheckBox();
+    if (timerPtr && timerPtr->isActive()) {
+      timerPtr->stop();
+    }
+  }
+}
+
+void MainWindow::onPortErrorOccurred(const QString &msg) {
+  QMessageBox::critical(this, "串口错误", msg);
+}
+
+void MainWindow::onTimerTimeout() {
+  const auto command = ui->userInputView->toPlainText();
+  sendCommand(command);
 }
 
 QByteArray MainWindow::appendCheckCode(const QByteArray &command,
