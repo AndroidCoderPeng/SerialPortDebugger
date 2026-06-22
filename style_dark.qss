@@ -33,7 +33,7 @@ QComboBox::drop-down {
 }
 
 QComboBox::down-arrow {
-    image: url(:/down_arrow.png);
+    image: url(:/combox_arrow.png);
     width: 16px;
     height: 16px;
 }
@@ -47,7 +47,7 @@ QComboBox::drop-down:hover {
 }
 
 QComboBox::down-arrow:hover {
-    image: url(:/down_arrow_3db39e.png);
+    image: url(:/combox_arrow_007aff.png);
 }
 
 QComboBox QAbstractItemView {

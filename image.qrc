@@ -1,13 +1,12 @@
 <RCC>
     <qresource prefix="/">
         <file>application.png</file>
-        <file>down_arrow.png</file>
-        <file>down_arrow_3db39e.png</file>
+        <file>combox_arrow.png</file>
+        <file>combox_arrow_007aff.png</file>
         <file>checkbox_unchecked.png</file>
         <file>checkbox_checked.png</file>
     </qresource>
     <qresource prefix="/icon">
         <file>application.ico</file>
-        <file>button_add.ico</file>
     </qresource>
 </RCC>
